@@ -9,7 +9,11 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
-		config.setTitle("KitchenGame14");
+		config.setTitle("Kitchen Game");
+		config.setWindowedMode(960, 540);
+		config.useVsync(true);
+		config.setForegroundFPS(60);
 		new Lwjgl3Application(new KitchenGame14(), config);
+
 	}
 }
