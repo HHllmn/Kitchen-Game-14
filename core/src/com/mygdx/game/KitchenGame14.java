@@ -11,6 +11,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.Input.*;
 
 public class KitchenGame14 extends ApplicationAdapter {
 	Texture img;
@@ -24,7 +25,7 @@ public class KitchenGame14 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		//img = new Texture("badlogic.jpg");
 
 		//Loads the images for Chef and Background (BG) in, 64x64 pixels each
 		//ChefImage = new Texture(Gdx.files.internal("ChefImage.png"));
@@ -46,24 +47,28 @@ public class KitchenGame14 extends ApplicationAdapter {
 	@Override
 	public void render () {
 		ScreenUtils.clear(1, 0, 0, 1);
+		Texture chefAtex = new Texture("chef.png");
+		ChefA.width = chefAtex.getWidth();
+		ChefA.height = chefAtex.getHeight();
 		batch.begin();
-		batch.draw(img, 0, 0);
+		batch.draw(chefAtex, ChefA.x, ChefA.y);
 		batch.end();
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		ChefA.x = 100;
-		ChefA.y = 100;
-		Texture chefAtex = new Texture("chef.png");
 
-		batch.draw(chefAtex, ChefA.x, ChefA.y);
-		batch.end();
+		if(Gdx.input.isKeyPressed(Keys.A)) ChefA.x -= 200 * Gdx.graphics.getDeltaTime();
+		if(Gdx.input.isKeyPressed(Keys.D)) ChefA.x += 200 * Gdx.graphics.getDeltaTime();
+		if(Gdx.input.isKeyPressed(Keys.S)) ChefA.y -= 200 * Gdx.graphics.getDeltaTime();
+		if(Gdx.input.isKeyPressed(Keys.W)) ChefA.y += 200 * Gdx.graphics.getDeltaTime();
 
+		if(ChefA.x < 0) ChefA.x = 0;
+		if(ChefA.x > 960 - ChefA.width) ChefA.x = 960 - ChefA.width;
+		if(ChefA.y < 0) ChefA.y = 0;
+		if(ChefA.y > 540 - ChefA.height) ChefA.y = 540 - ChefA.height;
 	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
 	}
 }
