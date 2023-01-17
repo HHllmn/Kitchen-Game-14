@@ -1,20 +1,22 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.Input.*;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class KitchenGame14 extends ApplicationAdapter {
 	Texture img;
@@ -23,11 +25,18 @@ public class KitchenGame14 extends ApplicationAdapter {
 	private Texture BGImage; //Image for the background
 	private OrthographicCamera camera; //Camera which will be used to view the game
 	private SpriteBatch batch; //Sprite batch which will use the ChefImage to display the character
+
+	//public ArrayList<Rectangle> RectangleList;
 	public Rectangle ChefA; //Creates ChefA Rectangle/Hitbox
 
 	public Rectangle OrdersList; //Order list on the side of the screen
 	public Rectangle MenuItem1; //Menu Item Number 1
 	public Rectangle Border; //Border Item
+
+	public Rectangle Oven;
+
+	//private Stage stage;
+	//private Table table;
 
 
 	@Override
@@ -45,8 +54,12 @@ public class KitchenGame14 extends ApplicationAdapter {
 		 // /540, desktop ratio)
 		batch = new SpriteBatch();
 
+		//RectangleList = new ArrayList();
+		//RectangleList.add(new Rectangle(0, 540 - 100, 100, 50));
+
+
 		//Create Chef rectangle
-		ChefA = new Rectangle(800 / 2 - 64 / 2, 20, 80, 80);
+		ChefA = new Rectangle(800 / 2 - 64 / 2, 20, 70, 70);
 		//ChefA.x = 800 / 2 - 64 / 2;
 		//ChefA.y = 20;
 		//ChefA.width = 80;
@@ -56,26 +69,34 @@ public class KitchenGame14 extends ApplicationAdapter {
 		OrdersList = new Rectangle(0, 0, 100, 50);
 
 
-		MenuItem1 = new Rectangle(0, 0, 100, 50);
-		Border = new Rectangle(0, 0, 100, 50);
+		MenuItem1 = new Rectangle(0, 540 - 100, 100, 50);
+		Border = new Rectangle(0, 540 - 110, 100, 50);
+		Oven = new Rectangle(170 + (70 * 4), 25 + (4*70), 70, 70);
 
 
+		//stage = new Stage();
+		//Gdx.input.setInputProcessor(stage);
+
+		//table = new Table();
+		//table.setFillParent(true);
+		//table.add(ChefA);
+		//stage.addActor(table);
+
+		//table.setDebug(true);
 
 	}
+
+	//public void resize (int width, int height) {
+	//	stage.getViewport().update(width, height, true);
+	//}
 
 	@Override
 	public void render () {
 		ScreenUtils.clear(1, 0, 0, 1);
 
-		//Pixmap pixmap200 = new Pixmap(Gdx.files.internal("chef.png"));
-		//Pixmap pixmap100 = new Pixmap(100, 100, pixmap200.getFormat());
-		//pixmap100.drawPixmap(pixmap200,
-		//		0, 0, pixmap200.getWidth(), pixmap200.getHeight(),
-		//		0, 0, pixmap100.getWidth(), pixmap100.getHeight()
-		//);
-		//Texture texture = new Texture(pixmap100);
-		//pixmap200.dispose();
-		//pixmap100.dispose();
+		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		//stage.act(Gdx.graphics.getDeltaTime());
+		//stage.draw();
 
 		Texture chefAtex = new Texture("chef.png");
 		//ChefA.width = chefAtex.getWidth();
@@ -85,6 +106,8 @@ public class KitchenGame14 extends ApplicationAdapter {
 		OrdersList.width = ordersListTex.getWidth();
 		OrdersList.height = ordersListTex.getHeight();
 
+		Texture ovenTex = new Texture("Oven.png");
+
 		Texture menuItem1Tex = new Texture("BurgerMenuItem.png");
 		MenuItem1.width = menuItem1Tex.getWidth();
 		MenuItem1.height = menuItem1Tex.getHeight();
@@ -93,7 +116,15 @@ public class KitchenGame14 extends ApplicationAdapter {
 		Border.width = borderTex.getWidth();
 		Border.height = borderTex.getHeight();
 
+		Texture floorTex = new Texture("FloorPattern.png");
+
+		floorTex.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+
 		batch.begin();
+		batch.draw(floorTex, 170, 25, 0, 0, 770, 490);
+		batch.draw(ovenTex, Oven.x, Oven.y, Oven.height, Oven.width);
+		batch.draw(ovenTex, Oven.x, Oven.y - 70, Oven.height, Oven.width);
+
 		batch.draw(chefAtex, ChefA.x, ChefA.y, ChefA.height, ChefA.width);
 		batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
 		batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
@@ -107,14 +138,31 @@ public class KitchenGame14 extends ApplicationAdapter {
 		if(Gdx.input.isKeyPressed(Keys.S)) ChefA.y -= 200 * Gdx.graphics.getDeltaTime();
 		if(Gdx.input.isKeyPressed(Keys.W)) ChefA.y += 200 * Gdx.graphics.getDeltaTime();
 
-		if(ChefA.x < 0) ChefA.x = 0;
-		if(ChefA.x > 960 - ChefA.width) ChefA.x = 960 - ChefA.width;
-		if(ChefA.y < 0) ChefA.y = 0;
-		if(ChefA.y > 540 - ChefA.height) ChefA.y = 540 - ChefA.height;
+		if(ChefA.x < 170) ChefA.x = 170;
+		if(ChefA.x > 960 - 20 - ChefA.width) ChefA.x = 960 - 20 - ChefA.width;
+		if(ChefA.y < 25) ChefA.y = 25;
+		if(ChefA.y > 540 - 25 - ChefA.height) ChefA.y = 540 - 25 - ChefA.height;
+
+		//counter collision
+		CounterCollision(ChefA);
+
+
+	}
+
+	private void CounterCollision (Rectangle playerChef) {
+
+		if(playerChef.x > (170 + (2 * 70)) && playerChef.y < (25 + (5 * 70))) {
+			playerChef.x = (170 + (2 * 70));
+			playerChef.y = (25 + (5 * 70));
+		}
+
 	}
 	
 	@Override
 	public void dispose () {
+
 		batch.dispose();
+		//stage.dispose();
+
 	}
 }
