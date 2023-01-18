@@ -28,12 +28,26 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	//public ArrayList<Rectangle> RectangleList;
 	public Rectangle ChefA; //Creates ChefA Rectangle/Hitbox
+	public Rectangle ChefB;
+	public int ChefNumber = 1;
 
 	public Rectangle OrdersList; //Order list on the side of the screen
 	public Rectangle MenuItem1; //Menu Item Number 1
 	public Rectangle Border; //Border Item
 
 	public Rectangle Oven;
+
+	public int TileSize; //Multiply tile position by this to get the pixel position
+
+	public int[][] LogicGrid = new int[][]{
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1 },
+			{ 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1 }
+	};
 
 	//private Stage stage;
 	//private Table table;
@@ -81,6 +95,15 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		//ChefA.y = 20;
 		//ChefA.width = 80;
 		//ChefA.height = 80;
+
+		//Create ChefB rectangle
+		ChefB = new Rectangle();
+		ChefB.x = 800 / 2 - 64 / 2;
+		ChefB.y = 20;
+		ChefB.width = 100;
+		ChefB.height = 50;
+
+
 
 		//Create List of Orders rectangle
 		OrdersList = new Rectangle(0, 0, 100, 50);
@@ -155,8 +178,63 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		if(ChefA.y < 0) ChefA.y = 0;
 		if(ChefA.y > 490 - ChefA.height) ChefA.y = 490 - ChefA.height;
 
+		//ScreenUtils.clear(1, 0, 0, 1);
+		//if(Gdx.input.isKeyPressed(Keys.SPACE)) SwitchChefs();
+		//chefA();
+		//chefB();
 
+	}
+	public void SwitchChefs(){
+		//Subroutine to switch between chef;
+		if (ChefNumber == 1) ChefNumber++;
+		if (ChefNumber == 2) ChefNumber--;
+	}
 
+	public void chefA() {
+
+		Texture chefAtex = new Texture("chef.png");
+		ChefA.width = chefAtex.getWidth();
+		ChefA.height = chefAtex.getHeight();
+		batch.begin();
+		batch.draw(chefAtex, ChefA.x, ChefA.y);
+		batch.end();
+		camera.update();
+		batch.setProjectionMatrix(camera.combined);
+
+		if (ChefNumber == 1) {
+			if (Gdx.input.isKeyPressed(Keys.A)) ChefA.x -= 275 * Gdx.graphics.getDeltaTime();
+			if (Gdx.input.isKeyPressed(Keys.D)) ChefA.x += 275 * Gdx.graphics.getDeltaTime();
+			if (Gdx.input.isKeyPressed(Keys.S)) ChefA.y -= 200 * Gdx.graphics.getDeltaTime();
+			if (Gdx.input.isKeyPressed(Keys.W)) ChefA.y += 200 * Gdx.graphics.getDeltaTime();
+		}
+
+		if(ChefA.x < 0) ChefA.x = 0;
+		if(ChefA.x > 770 - ChefA.width) ChefA.x = 770 - ChefA.width;
+		if(ChefA.y < 0) ChefA.y = 0;
+		if(ChefA.y > 540 - ChefA.height) ChefA.y = 540 - ChefA.height;
+	}
+
+	public void chefB(){
+		Texture chefBtex = new Texture("chef.png");
+		ChefB.width = chefBtex.getWidth();
+		ChefB.height = chefBtex.getHeight();
+		batch.begin();
+		batch.draw(chefBtex, ChefB.x, ChefB.y);
+		batch.end();
+		camera.update();
+		batch.setProjectionMatrix(camera.combined);
+
+		if (ChefNumber == 2) {
+			if (Gdx.input.isKeyPressed(Keys.A)) ChefB.x -= 275 * Gdx.graphics.getDeltaTime();
+			if (Gdx.input.isKeyPressed(Keys.D)) ChefB.x += 275 * Gdx.graphics.getDeltaTime();
+			if (Gdx.input.isKeyPressed(Keys.S)) ChefB.y -= 200 * Gdx.graphics.getDeltaTime();
+			if (Gdx.input.isKeyPressed(Keys.W)) ChefB.y += 200 * Gdx.graphics.getDeltaTime();
+		}
+
+		if(ChefB.x < 0) ChefB.x = 0;
+		if(ChefB.x > 960 - ChefB.width) ChefB.x = 960 - ChefB.width;
+		if(ChefB.y < 0) ChefB.y = 0;
+		if(ChefB.y > 540 - ChefB.height) ChefB.y = 540 - ChefB.height;
 	}
 
 	//This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
@@ -217,7 +295,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public boolean scrolled(float amount, float amount2) {
 		return false;
 	}
-	
+
 	@Override
 	public void dispose () {
 
