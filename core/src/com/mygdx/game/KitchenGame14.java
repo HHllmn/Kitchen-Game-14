@@ -1,15 +1,18 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+//import com.badlogic.gdx.scenes.scene2d.Stage;
+//import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
+//import com.badlogic.gdx.audio.Music;
+//import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.math.Rectangle;
@@ -18,11 +21,8 @@ import com.badlogic.gdx.Input.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class KitchenGame14 extends ApplicationAdapter {
-	Texture img;
+public class KitchenGame14 extends ApplicationAdapter implements InputProcessor {
 
-	private Texture ChefImage; //Image of the chef variable
-	private Texture BGImage; //Image for the background
 	private OrthographicCamera camera; //Camera which will be used to view the game
 	private SpriteBatch batch; //Sprite batch which will use the ChefImage to display the character
 
@@ -38,9 +38,26 @@ public class KitchenGame14 extends ApplicationAdapter {
 	//private Stage stage;
 	//private Table table;
 
+	Texture img;
+	TiledMap tiledMap;
+	private TiledMapRenderer tiledMapRenderer;
 
-	@Override
+
+		@Override
 	public void create () {
+
+		float w = Gdx.graphics.getWidth();
+		float h = Gdx.graphics.getHeight();
+
+		img = new Texture("PiazzaPanicTileSet.png");
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false,w,h);
+			camera.translate(-170,-25);
+		camera.update();
+		tiledMap = new TmxMapLoader().load("PiazzaPanicLevel.tmx");
+		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+		Gdx.input.setInputProcessor(this);
+
 		batch = new SpriteBatch();
 		//img = new Texture("badlogic.jpg");
 
@@ -49,17 +66,17 @@ public class KitchenGame14 extends ApplicationAdapter {
 		//BGImage = new Texture(Gdx.files.internal("BGImage.png"));
 
 		//Creates the camera and sprite batch
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 960, 540); //Camera shows the whole screen (set to
+		//camera = new OrthographicCamera();
+		//camera.setToOrtho(false, 960, 540); //Camera shows the whole screen (set to
 		 // /540, desktop ratio)
-		batch = new SpriteBatch();
+		//batch = new SpriteBatch();
 
 		//RectangleList = new ArrayList();
 		//RectangleList.add(new Rectangle(0, 540 - 100, 100, 50));
 
 
 		//Create Chef rectangle
-		ChefA = new Rectangle(800 / 2 - 64 / 2, 20, 70, 70);
+		ChefA = new Rectangle(8 * 70, 0, 70, 70);
 		//ChefA.x = 800 / 2 - 64 / 2;
 		//ChefA.y = 20;
 		//ChefA.width = 80;
@@ -90,23 +107,29 @@ public class KitchenGame14 extends ApplicationAdapter {
 	//	stage.getViewport().update(width, height, true);
 	//}
 
+
+
 	@Override
 	public void render () {
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
+		camera.update();
+
+
 		ScreenUtils.clear(1, 0, 0, 1);
 
-		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		//stage.act(Gdx.graphics.getDeltaTime());
-		//stage.draw();
+		Gdx.gl.glClearColor(0, 0, 0, 0);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		camera.update();
+		tiledMapRenderer.setView(camera);
+		tiledMapRenderer.render();
+
 
 		Texture chefAtex = new Texture("chef.png");
-		//ChefA.width = chefAtex.getWidth();
-		//ChefA.height = chefAtex.getHeight();
 
 		Texture ordersListTex = new Texture("MenuTesting.png");
 		OrdersList.width = ordersListTex.getWidth();
 		OrdersList.height = ordersListTex.getHeight();
-
-		Texture ovenTex = new Texture("Oven.png");
 
 		Texture menuItem1Tex = new Texture("BurgerMenuItem.png");
 		MenuItem1.width = menuItem1Tex.getWidth();
@@ -116,46 +139,83 @@ public class KitchenGame14 extends ApplicationAdapter {
 		Border.width = borderTex.getWidth();
 		Border.height = borderTex.getHeight();
 
-		Texture floorTex = new Texture("FloorPattern.png");
-
-		floorTex.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-
 		batch.begin();
-		batch.draw(floorTex, 170, 25, 0, 0, 770, 490);
-		batch.draw(ovenTex, Oven.x, Oven.y, Oven.height, Oven.width);
-		batch.draw(ovenTex, Oven.x, Oven.y - 70, Oven.height, Oven.width);
 
-		batch.draw(chefAtex, ChefA.x, ChefA.y, ChefA.height, ChefA.width);
-		batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
-		batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
-		batch.draw(borderTex, Border.x, Border.y);
+		batch.draw(chefAtex, ChefA.x, ChefA.y, ChefA.width, ChefA.height);
+
+		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
+		//batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
+		//batch.draw(borderTex, Border.x, Border.y);
 		batch.end();
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 
-		if(Gdx.input.isKeyPressed(Keys.A)) ChefA.x -= 275 * Gdx.graphics.getDeltaTime();
-		if(Gdx.input.isKeyPressed(Keys.D)) ChefA.x += 275 * Gdx.graphics.getDeltaTime();
-		if(Gdx.input.isKeyPressed(Keys.S)) ChefA.y -= 200 * Gdx.graphics.getDeltaTime();
-		if(Gdx.input.isKeyPressed(Keys.W)) ChefA.y += 200 * Gdx.graphics.getDeltaTime();
+		if(ChefA.x < 0) ChefA.x = 0;
+		if(ChefA.x > 770 - ChefA.width) ChefA.x = 770 - ChefA.width;
+		if(ChefA.y < 0) ChefA.y = 0;
+		if(ChefA.y > 490 - ChefA.height) ChefA.y = 490 - ChefA.height;
 
-		if(ChefA.x < 170) ChefA.x = 170;
-		if(ChefA.x > 960 - 20 - ChefA.width) ChefA.x = 960 - 20 - ChefA.width;
-		if(ChefA.y < 25) ChefA.y = 25;
-		if(ChefA.y > 540 - 25 - ChefA.height) ChefA.y = 540 - 25 - ChefA.height;
-
-		//counter collision
-		CounterCollision(ChefA);
 
 
 	}
 
-	private void CounterCollision (Rectangle playerChef) {
+	//This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
+	// less than a second but incrementally move the chef over until its in the new space, like a sliding motion.
+	private void translateChef(Rectangle Chef, int x, int y) {
+		Chef.x = Chef.x + x;
+		Chef.y = Chef.y + y;
+	}
 
-		if(playerChef.x > (170 + (2 * 70)) && playerChef.y < (25 + (5 * 70))) {
-			playerChef.x = (170 + (2 * 70));
-			playerChef.y = (25 + (5 * 70));
-		}
+	@Override
+	public boolean keyDown(int keycode) {
+		return false;
+	}
 
+	@Override
+	public boolean keyUp(int keycode) {
+		if(keycode == Input.Keys.LEFT)
+			translateChef(ChefA,-70,0);
+		if(keycode == Input.Keys.RIGHT)
+			translateChef(ChefA,70,0);
+		if(keycode == Input.Keys.UP)
+			translateChef(ChefA,0,70);
+		if(keycode == Input.Keys.DOWN)
+			translateChef(ChefA,0,-70);
+		if(keycode == Input.Keys.NUM_1)
+			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
+		if(keycode == Input.Keys.NUM_2)
+			tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(float amount, float amount2) {
+		return false;
 	}
 	
 	@Override
