@@ -82,4 +82,9 @@ public class Chef {
     public Texture getTex(){
         return new Texture(texturePath);
     }
+
+    public void translateChef(int xmove, int ymove){
+        x += xmove;
+        y += ymove;
+    }
 }

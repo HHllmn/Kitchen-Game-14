@@ -181,14 +181,14 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	@Override
 	public boolean keyUp(int keycode) {
-			
-		if(keycode == Input.Keys.LEFT)
+
+		if(keycode == Keys.A)
 			translateChef(ChefA,-70,0);
-		if(keycode == Input.Keys.RIGHT)
+		if(keycode == Keys.D)
 			translateChef(ChefA,70,0);
-		if(keycode == Input.Keys.UP)
+		if(keycode == Keys.W)
 			translateChef(ChefA,0,70);
-		if(keycode == Input.Keys.DOWN)
+		if(keycode == Keys.S)
 			translateChef(ChefA,0,-70);
 		if(keycode == Input.Keys.NUM_1)
 			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
