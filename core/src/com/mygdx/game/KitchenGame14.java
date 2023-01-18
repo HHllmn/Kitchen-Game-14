@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.Input.*;
+import sun.jvm.hotspot.gc.shared.Space;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	private SpriteBatch batch; //Sprite batch which will use the ChefImage to display the character
 
 	//public ArrayList<Rectangle> RectangleList;
-	public Rectangle ChefA; //Creates ChefA Rectangle/Hitbox
-	public Rectangle ChefB;
+	public Chef ChefA; //Creates ChefA Rectangle/Hitbox
+	public Chef ChefB;
 	public int ChefNumber = 1;
 
 	public Rectangle OrdersList; //Order list on the side of the screen
@@ -78,18 +79,14 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 
 		//Create Chef rectangle
-		ChefA = new Rectangle(8 * 70, 0, 70, 70);
+		ChefA = new Chef();
 		//ChefA.x = 800 / 2 - 64 / 2;
 		//ChefA.y = 20;
 		//ChefA.width = 80;
 		//ChefA.height = 80;
 
 		//Create ChefB rectangle
-		ChefB = new Rectangle();
-		ChefB.x = 800 / 2 - 64 / 2;
-		ChefB.y = 20;
-		ChefB.width = 100;
-		ChefB.height = 50;
+		ChefB = new Chef();
 
 
 
@@ -135,9 +132,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
 
-
-		Texture chefAtex = new Texture("chef.png");
-
 		Texture ordersListTex = new Texture("MenuTesting.png");
 		OrdersList.width = ordersListTex.getWidth();
 		OrdersList.height = ordersListTex.getHeight();
@@ -152,7 +146,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		batch.begin();
 
-		batch.draw(chefAtex, ChefA.x, ChefA.y, ChefA.width, ChefA.height);
+		batch.draw(ChefA.getTex(), ChefA.x, ChefA.y, ChefA.getWidth(), ChefA.getHeight());
+		batch.draw(ChefB.getTex(), ChefB.x, ChefB.y, ChefB.getWidth(), ChefB.getHeight());
 
 		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
 		//batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
@@ -162,15 +157,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.setProjectionMatrix(camera.combined);
 
 		if(ChefA.x < 0) ChefA.x = 0;
-		if(ChefA.x > 770 - ChefA.width) ChefA.x = 770 - ChefA.width;
+		if(ChefA.x > 770 - ChefA.getWidth()) ChefA.x = 770 - ChefA.getWidth();
 		if(ChefA.y < 0) ChefA.y = 0;
-		if(ChefA.y > 490 - ChefA.height) ChefA.y = 490 - ChefA.height;
-
-		ScreenUtils.clear(1, 0, 0, 1);
-		if(Gdx.input.isKeyPressed(Keys.SPACE)) SwitchChefs();
-		chefA();
-		chefB();
-
+		if(ChefA.y > 490 - ChefA.getHeight()) ChefA.y = 490 - ChefA.getHeight();
 	}
 	public void SwitchChefs(){
 		//Subroutine to switch between chef;
@@ -178,59 +167,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		if (ChefNumber == 2) ChefNumber--;
 	}
 
-	public void chefA(){
-
-
-
-
-		Texture chefAtex = new Texture("chef.png");
-		ChefA.width = chefAtex.getWidth();
-		ChefA.height = chefAtex.getHeight();
-		batch.begin();
-		batch.draw(chefAtex, ChefA.x, ChefA.y);
-		batch.end();
-		camera.update();
-		batch.setProjectionMatrix(camera.combined);
-
-		if (ChefNumber == 1) {
-			if (Gdx.input.isKeyPressed(Keys.A)) ChefA.x -= 275 * Gdx.graphics.getDeltaTime();
-			if (Gdx.input.isKeyPressed(Keys.D)) ChefA.x += 275 * Gdx.graphics.getDeltaTime();
-			if (Gdx.input.isKeyPressed(Keys.S)) ChefA.y -= 200 * Gdx.graphics.getDeltaTime();
-			if (Gdx.input.isKeyPressed(Keys.W)) ChefA.y += 200 * Gdx.graphics.getDeltaTime();
-		}
-
-		if(ChefA.x < 0) ChefA.x = 0;
-		if(ChefA.x > 770 - ChefA.width) ChefA.x = 770 - ChefA.width;
-		if(ChefA.y < 0) ChefA.y = 0;
-		if(ChefA.y > 540 - ChefA.height) ChefA.y = 540 - ChefA.height;
-	}
-
-	public void chefB(){
-		Texture chefBtex = new Texture("chef.png");
-		ChefB.width = chefBtex.getWidth();
-		ChefB.height = chefBtex.getHeight();
-		batch.begin();
-		batch.draw(chefBtex, ChefB.x, ChefB.y);
-		batch.end();
-		camera.update();
-		batch.setProjectionMatrix(camera.combined);
-
-		if (ChefNumber == 2) {
-			if (Gdx.input.isKeyPressed(Keys.A)) ChefB.x -= 275 * Gdx.graphics.getDeltaTime();
-			if (Gdx.input.isKeyPressed(Keys.D)) ChefB.x += 275 * Gdx.graphics.getDeltaTime();
-			if (Gdx.input.isKeyPressed(Keys.S)) ChefB.y -= 200 * Gdx.graphics.getDeltaTime();
-			if (Gdx.input.isKeyPressed(Keys.W)) ChefB.y += 200 * Gdx.graphics.getDeltaTime();
-		}
-
-		if(ChefB.x < 0) ChefB.x = 0;
-		if(ChefB.x > 960 - ChefB.width) ChefB.x = 960 - ChefB.width;
-		if(ChefB.y < 0) ChefB.y = 0;
-		if(ChefB.y > 540 - ChefB.height) ChefB.y = 540 - ChefB.height;
-	}
-
 	//This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
 	// less than a second but incrementally move the chef over until its in the new space, like a sliding motion.
-	private void translateChef(Rectangle Chef, int x, int y) {
+	private void translateChef(Chef Chef, int x, int y) {
 		Chef.x = Chef.x + x;
 		Chef.y = Chef.y + y;
 	}
@@ -242,6 +181,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	@Override
 	public boolean keyUp(int keycode) {
+			
 		if(keycode == Input.Keys.LEFT)
 			translateChef(ChefA,-70,0);
 		if(keycode == Input.Keys.RIGHT)
@@ -254,6 +194,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
 		if(keycode == Input.Keys.NUM_2)
 			tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
+		if(keycode == Input.Keys.E) SwitchChefs();
 		return false;
 	}
 
