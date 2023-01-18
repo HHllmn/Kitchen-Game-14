@@ -30,7 +30,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	//public ArrayList<Rectangle> RectangleList;
 	public Chef ChefA; //Creates ChefA Rectangle/Hitbox
 	public Chef ChefB;
-	public int ChefNumber = 1;
+	public int SelectedChef = 0;
 
 	public Rectangle OrdersList; //Order list on the side of the screen
 	public Rectangle MenuItem1; //Menu Item Number 1
@@ -163,8 +163,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	}
 	public void SwitchChefs(){
 		//Subroutine to switch between chef;
-		if (ChefNumber == 1) ChefNumber++;
-		if (ChefNumber == 2) ChefNumber--;
+		if (SelectedChef == 0) SelectedChef++;
+		else if (SelectedChef == 1) SelectedChef--;
 	}
 
 	//This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
@@ -181,20 +181,28 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	@Override
 	public boolean keyUp(int keycode) {
-
-		if(keycode == Keys.A)
-			translateChef(ChefA,-70,0);
-		if(keycode == Keys.D)
-			translateChef(ChefA,70,0);
-		if(keycode == Keys.W)
-			translateChef(ChefA,0,70);
-		if(keycode == Keys.S)
-			translateChef(ChefA,0,-70);
-		if(keycode == Input.Keys.NUM_1)
-			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
-		if(keycode == Input.Keys.NUM_2)
-			tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
-		if(keycode == Input.Keys.E) SwitchChefs();
+		if (SelectedChef == 0) {
+			if (keycode == Keys.A)
+				ChefA.translateChef(-70, 0);
+			if (keycode == Keys.D)
+				ChefA.translateChef(70,0);
+			if (keycode == Keys.W)
+				ChefA.translateChef(0,70);
+			if (keycode == Keys.S)
+				ChefA.translateChef(0,-70);
+			if (keycode == Input.Keys.E) SwitchChefs();
+		}
+		else if (SelectedChef == 1){
+			if (keycode == Keys.A)
+				ChefB.translateChef(-70, 0);
+			if (keycode == Keys.D)
+				ChefB.translateChef(70,0);
+			if (keycode == Keys.W)
+				ChefB.translateChef(0,70);
+			if (keycode == Keys.S)
+				ChefB.translateChef(0,-70);
+			if (keycode == Input.Keys.E) SwitchChefs();
+		}
 		return false;
 	}
 
