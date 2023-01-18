@@ -17,10 +17,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.Input.*;
+import jdk.jpackage.internal.Log;
 import sun.jvm.hotspot.gc.shared.Space;
 
 import java.awt.*;
 import java.util.ArrayList;
+
+import static sun.rmi.transport.TransportConstants.Return;
 
 public class KitchenGame14 extends ApplicationAdapter implements InputProcessor {
 
@@ -37,6 +40,18 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public Rectangle Border; //Border Item
 
 	public Rectangle Oven;
+
+	public int TileSize; //Multiply tile position by this to get the pixel position
+
+	public int[][] LogicGrid = new int[][]{
+			{ 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1 },
+			{ 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }
+	};
 
 	//private Stage stage;
 	//private Table table;
@@ -55,7 +70,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		img = new Texture("PiazzaPanicTileSet.png");
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,w,h);
-			camera.translate(-170,-25);
+		camera.translate(-170,-25);
 		camera.update();
 		tiledMap = new TmxMapLoader().load("PiazzaPanicLevel.tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -161,6 +176,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		if(ChefA.y < 0) ChefA.y = 0;
 		if(ChefA.y > 490 - ChefA.getHeight()) ChefA.y = 490 - ChefA.getHeight();
 	}
+
 	public void SwitchChefs(){
 		//Subroutine to switch between chef;
 		if (ChefNumber == 1) ChefNumber++;
@@ -174,6 +190,23 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		Chef.y = Chef.y + y;
 	}
 
+	//0 up, 1 right, 2 down, 3 left
+	private boolean collisionCheck(Chef PlayerChef, int direction) {
+		int gridX = 0;
+		int gridY = 0;
+
+		if(PlayerChef.x != 0) gridX = (PlayerChef.getX() / 70);
+		if(PlayerChef.y != 0) gridY = (PlayerChef.getY() / 70);
+
+		if(direction == 0 && (gridY != 0 || gridY != LogicGrid.length - 1)) if(LogicGrid[gridY + 1][gridX] == 0) return true;
+		if(direction == 1 && (gridX != 0 || gridX != LogicGrid[0].length - 1)) if(LogicGrid[gridY][gridX + 1] == 0) return true;
+		if(direction == 2 && (gridY != 0 || gridY != LogicGrid.length - 1)) if(LogicGrid[gridY - 1][gridX] == 0) return true;
+		if(direction == 3 && (gridX != 0 || gridX != LogicGrid[0].length - 1)) if(LogicGrid[gridY][gridX - 1] == 0) return true;
+
+		return false;
+
+	}
+
 	@Override
 	public boolean keyDown(int keycode) {
 		return false;
@@ -181,15 +214,15 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	@Override
 	public boolean keyUp(int keycode) {
-			
+
 		if(keycode == Input.Keys.LEFT)
-			translateChef(ChefA,-70,0);
+			if(collisionCheck(ChefA, 3)) translateChef(ChefA,-70,0);
 		if(keycode == Input.Keys.RIGHT)
-			translateChef(ChefA,70,0);
+			if(collisionCheck(ChefA, 1)) translateChef(ChefA,70,0);
 		if(keycode == Input.Keys.UP)
-			translateChef(ChefA,0,70);
+			if(collisionCheck(ChefA, 0)) translateChef(ChefA,0,70);
 		if(keycode == Input.Keys.DOWN)
-			translateChef(ChefA,0,-70);
+			if(collisionCheck(ChefA, 2)) translateChef(ChefA,0,-70);
 		if(keycode == Input.Keys.NUM_1)
 			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
 		if(keycode == Input.Keys.NUM_2)
