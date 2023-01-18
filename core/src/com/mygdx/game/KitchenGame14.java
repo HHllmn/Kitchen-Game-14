@@ -37,6 +37,18 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	public Rectangle Oven;
 
+	public int TileSize; //Multiply tile position by this to get the pixel position
+
+	public int[][] LogicGrid = new int[][]{
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1 },
+			{ 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+			{ 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1 }
+	};
+
 	//private Stage stage;
 	//private Table table;
 
@@ -166,10 +178,10 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		if(ChefA.y < 0) ChefA.y = 0;
 		if(ChefA.y > 490 - ChefA.height) ChefA.y = 490 - ChefA.height;
 
-		ScreenUtils.clear(1, 0, 0, 1);
-		if(Gdx.input.isKeyPressed(Keys.SPACE)) SwitchChefs();
-		chefA();
-		chefB();
+		//ScreenUtils.clear(1, 0, 0, 1);
+		//if(Gdx.input.isKeyPressed(Keys.SPACE)) SwitchChefs();
+		//chefA();
+		//chefB();
 
 	}
 	public void SwitchChefs(){
@@ -178,10 +190,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		if (ChefNumber == 2) ChefNumber--;
 	}
 
-	public void chefA(){
-
-
-
+	public void chefA() {
 
 		Texture chefAtex = new Texture("chef.png");
 		ChefA.width = chefAtex.getWidth();
