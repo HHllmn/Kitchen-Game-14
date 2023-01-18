@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="11" height="7" tilewidth="70" tileheight="70" infinite="0" nextlayerid="4" nextobjectid="1">
+ <tileset firstgid="1" name="PiazzaPanicTileSet" tilewidth="70" tileheight="70" tilecount="4" columns="2">
+  <image source="PiazzaPanicTileSet.png" width="140" height="140"/>
+ </tileset>
+ <layer id="1" name="Floor" width="11" height="7">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBzFJGEAMCAATg==
+  </data>
+ </layer>
+ <layer id="2" name="Countertop" width="11" height="7">
+  <data encoding="base64" compression="zlib">
+   eJxjZiAOMEMxOWqZsWBqqKW2e/FhZLUAMfQAXg==
+  </data>
+ </layer>
+ <layer id="3" name="InteractObjects" width="11" height="7">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAPYKKR2oEAAAQMAAU=
+  </data>
+ </layer>
+</map>
