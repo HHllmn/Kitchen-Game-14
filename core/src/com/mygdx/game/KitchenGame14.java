@@ -198,10 +198,10 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		if(PlayerChef.x != 0) gridX = (PlayerChef.getX() / 70);
 		if(PlayerChef.y != 0) gridY = (PlayerChef.getY() / 70);
 
-		if(direction == 0 && (gridY != 0 || gridY != LogicGrid.length - 1)) if(LogicGrid[gridY + 1][gridX] == 0) return true;
-		if(direction == 1 && (gridX != 0 || gridX != LogicGrid[0].length - 1)) if(LogicGrid[gridY][gridX + 1] == 0) return true;
-		if(direction == 2 && (gridY != 0 || gridY != LogicGrid.length - 1)) if(LogicGrid[gridY - 1][gridX] == 0) return true;
-		if(direction == 3 && (gridX != 0 || gridX != LogicGrid[0].length - 1)) if(LogicGrid[gridY][gridX - 1] == 0) return true;
+		if(direction == 0 && (gridY != LogicGrid.length - 1)) if(LogicGrid[gridY + 1][gridX] == 0) return true; //Check if the currently selected chef can move up.
+		if(direction == 1 && (gridX != LogicGrid[0].length - 1)) if(LogicGrid[gridY][gridX + 1] == 0) return true; //move right.
+		if(direction == 2 && (gridY != 0)) if(LogicGrid[gridY - 1][gridX] == 0) return true; //move down.
+		if(direction == 3 && (gridX != 0)) if(LogicGrid[gridY][gridX - 1] == 0) return true; //move left.
 
 		return false;
 
