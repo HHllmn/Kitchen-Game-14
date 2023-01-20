@@ -28,8 +28,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	private SpriteBatch batch; //Sprite batch which will use the ChefImage to display the character
 
 	//public ArrayList<Rectangle> RectangleList;
-	public Chef ChefA; //Creates ChefA Rectangle/Hitbox
-	public Chef ChefB;
+
+	ArrayList<Chef> ChefList = new ArrayList<>();
 	public int SelectedChef = 0;
 
 	public Rectangle OrdersList; //Order list on the side of the screen
@@ -78,17 +78,10 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		//RectangleList.add(new Rectangle(0, 540 - 100, 100, 50));
 
 
-		//Create Chef rectangle
-		ChefA = new Chef();
-		//ChefA.x = 800 / 2 - 64 / 2;
-		//ChefA.y = 20;
-		//ChefA.width = 80;
-		//ChefA.height = 80;
-
-		//Create ChefB rectangle
-		ChefB = new Chef();
-
-
+		//Create Chefs rectangle
+			//ChefCount is the number of chefs created for the game
+			int ChefCount = 2;
+			for (int i = 0; i < ChefCount; i++) ChefList.add(new Chef());
 
 		//Create List of Orders rectangle
 		OrdersList = new Rectangle(0, 0, 100, 50);
@@ -146,8 +139,13 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		batch.begin();
 
-		batch.draw(ChefA.getTex(), ChefA.x, ChefA.y, ChefA.getWidth(), ChefA.getHeight());
-		batch.draw(ChefB.getTex(), ChefB.x, ChefB.y, ChefB.getWidth(), ChefB.getHeight());
+		for (int i = 0; i < ChefList.size(); i++) {
+			batch.draw(ChefList.get(i).getTex(), ChefList.get(i).x, ChefList.get(i).y, ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
+		}
+
+
+		//batch.draw(ChefList.get(0).getTex(), ChefList.get(0).x, ChefList.get(0).y, ChefList.get(0).getWidth(), ChefList.get(0).getHeight());
+		//batch.draw(ChefList.get(1).getTex(), ChefList.get(1).x, ChefList.get(1).y, ChefList.get(1).getWidth(), ChefList.get(1).getHeight());
 
 		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
 		//batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
@@ -155,16 +153,11 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.end();
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
-
-		if(ChefA.x < 0) ChefA.x = 0;
-		if(ChefA.x > 770 - ChefA.getWidth()) ChefA.x = 770 - ChefA.getWidth();
-		if(ChefA.y < 0) ChefA.y = 0;
-		if(ChefA.y > 490 - ChefA.getHeight()) ChefA.y = 490 - ChefA.getHeight();
-	}
+		}
 	public void SwitchChefs(){
 		//Subroutine to switch between chef;
-		if (SelectedChef == 0) SelectedChef++;
-		else if (SelectedChef == 1) SelectedChef--;
+		SelectedChef++;
+		if (SelectedChef > ChefList.size()-1) SelectedChef = 0;
 	}
 
 	//This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
@@ -181,28 +174,15 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	@Override
 	public boolean keyUp(int keycode) {
-		if (SelectedChef == 0) {
 			if (keycode == Keys.A)
-				ChefA.translateChef(-70, 0);
+				ChefList.get(SelectedChef).translateChef(-70, 0);
 			if (keycode == Keys.D)
-				ChefA.translateChef(70,0);
+				ChefList.get(SelectedChef).translateChef(70,0);
 			if (keycode == Keys.W)
-				ChefA.translateChef(0,70);
+				ChefList.get(SelectedChef).translateChef(0,70);
 			if (keycode == Keys.S)
-				ChefA.translateChef(0,-70);
-			if (keycode == Input.Keys.E) SwitchChefs();
-		}
-		else if (SelectedChef == 1){
-			if (keycode == Keys.A)
-				ChefB.translateChef(-70, 0);
-			if (keycode == Keys.D)
-				ChefB.translateChef(70,0);
-			if (keycode == Keys.W)
-				ChefB.translateChef(0,70);
-			if (keycode == Keys.S)
-				ChefB.translateChef(0,-70);
-			if (keycode == Input.Keys.E) SwitchChefs();
-		}
+				ChefList.get(SelectedChef).translateChef(0,-70);
+			if (keycode == Keys.SPACE) SwitchChefs();
 		return false;
 	}
 
