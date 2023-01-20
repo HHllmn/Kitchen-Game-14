@@ -64,6 +64,13 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 103 }
 	};
 
+	public enum Facing {
+		UP,
+		RIGHT,
+		DOWN,
+		LEFT
+	}
+
 	Texture img;
 	TiledMap tiledMap;
 	private TiledMapRenderer tiledMapRenderer;
@@ -92,7 +99,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		TopBorder = new Rectangle(0, TileMapHeight, TileMapWidth, 25);
 		BottomBorder = new Rectangle(0, -25, TileMapWidth, 25);
 		RightBorder = new Rectangle(TileMapWidth, -25, 40, TileMapHeight+50);
-		LeftBorder = new Rectangle(-20, -25, 40, TileMapHeight+50);
+		LeftBorder = new Rectangle(-20, -25, 20, TileMapHeight+50);
 
 
 
@@ -172,17 +179,17 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	}
 
 	//0 up, 1 right, 2 down, 3 left
-	private boolean collisionCheck(Chef PlayerChef, int direction) {
+	private boolean collisionCheck(Chef PlayerChef, Facing direction) {
 		int gridX = 0;
 		int gridY = 0;
 
 		if(PlayerChef.getX() != 0) gridX = (PlayerChef.getX() / TileSize);
 		if(PlayerChef.getY() != 0) gridY = (PlayerChef.getY() / TileSize);
 
-		if(direction == 0 && (gridY != CollisionGrid.length - 1)) if(CollisionGrid[gridY + 1][gridX] == 0) return true; //Check if the currently selected chef can move up.
-		if(direction == 1 && (gridX != CollisionGrid[0].length - 1)) if(CollisionGrid[gridY][gridX + 1] == 0) return true; //move right.
-		if(direction == 2 && (gridY != 0)) if(CollisionGrid[gridY - 1][gridX] == 0) return true; //move down.
-		if(direction == 3 && (gridX != 0)) if(CollisionGrid[gridY][gridX - 1] == 0) return true; //move left.
+		if(direction == Facing.UP && (gridY != CollisionGrid.length - 1)) if(CollisionGrid[gridY + 1][gridX] == 0) return true; //Check if the currently selected chef can move up.
+		if(direction == Facing.RIGHT && (gridX != CollisionGrid[0].length - 1)) if(CollisionGrid[gridY][gridX + 1] == 0) return true; //move right.
+		if(direction == Facing.DOWN && (gridY != 0)) if(CollisionGrid[gridY - 1][gridX] == 0) return true; //move down.
+		if(direction == Facing.LEFT && (gridX != 0)) if(CollisionGrid[gridY][gridX - 1] == 0) return true; //move left.
 
 		return false;
 
@@ -198,19 +205,19 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		if(keycode == Input.Keys.LEFT) {
 			ChefA.setDirection(3);
-			if (collisionCheck(ChefA, 3)) translateChef(ChefA, -70, 0);
+			if (collisionCheck(ChefA, Facing.LEFT)) translateChef(ChefA, -70, 0);
 		}
 		if(keycode == Input.Keys.RIGHT) {
 			ChefA.setDirection(1);
-			if (collisionCheck(ChefA, 1)) translateChef(ChefA, 70, 0);
+			if (collisionCheck(ChefA, Facing.RIGHT)) translateChef(ChefA, 70, 0);
 		}
 		if(keycode == Input.Keys.UP) {
 			ChefA.setDirection(0);
-			if (collisionCheck(ChefA, 0)) translateChef(ChefA, 0, 70);
+			if (collisionCheck(ChefA, Facing.UP)) translateChef(ChefA, 0, 70);
 		}
 		if(keycode == Input.Keys.DOWN) {
 			ChefA.setDirection(2);
-			if (collisionCheck(ChefA, 2)) translateChef(ChefA, 0, -70);
+			if (collisionCheck(ChefA, Facing.DOWN)) translateChef(ChefA, 0, -70);
 		}
 		if(keycode == Input.Keys.NUM_1)
 			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
