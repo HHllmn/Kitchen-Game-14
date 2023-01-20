@@ -38,9 +38,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	public Rectangle Oven;
 
-	//private Stage stage;
-	//private Table table;
-
 	Texture img;
 	TiledMap tiledMap;
 	private TiledMapRenderer tiledMapRenderer;
