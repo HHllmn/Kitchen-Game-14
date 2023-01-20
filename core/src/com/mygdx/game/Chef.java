@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.w3c.dom.Text;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Chef {
     //Initial Variables
@@ -14,8 +15,10 @@ public class Chef {
     private int height;
 
     String texturePath;
-    Texture tex;
+
+    private ArrayList<Texture> tex;
     private SpriteBatch batch;
+    private int direction;
 
     //Creates a chef with ChefNumber/ID as 0, then increments (so next ChefNumber is 1)
     static int ChefNumber = 0;
@@ -23,30 +26,34 @@ public class Chef {
         ChefNumber += 1;
     }
     //0 is up, 1 is right, 2 is down, 3 is left
-    int direction = 0;
     public Chef(){
-        x = 8*70;
-        y = 0;
-        width = 70;
-        height = 70;
-        texturePath = "chef.png";
-        tex = new Texture(texturePath);
+        this.x = 8*70;
+        this.y = 0;
+        this.width = 70;
+        this.height = 70;
+        this.direction = 0;
+        //this.texturePath = "ChefUp.png";
+        this.tex = new ArrayList<Texture>();
+        this.tex.add(new Texture("ChefUp.png"));
+        this.tex.add(new Texture("ChefRight.png"));
+        this.tex.add(new Texture("ChefDown.png"));
+        this.tex.add(new Texture("ChefLeft.png"));
     }
     public Chef(int xaxis, int yaxis, int w, int h){
         batch = new SpriteBatch();
-        x = xaxis;
-        y = yaxis;
-        width = w;
-        height = h;
-        texturePath = "chef.png";
+        this.x = xaxis;
+        this.y = yaxis;
+        this.width = w;
+        this.height = h;
+        this.texturePath = "ChefUp.png";
     }
     public Chef(int xaxis, int yaxis, int w, int h, String tex){
             batch = new SpriteBatch();
-            x = xaxis;
-            y = yaxis;
-            width = w;
-            height = h;
-            texturePath = tex;
+            this.x = xaxis;
+            this.y = yaxis;
+            this.width = w;
+            this.height = h;
+            this.texturePath = tex;
     }
 
     public int getX(){
@@ -55,7 +62,6 @@ public class Chef {
     public void setX(int value){
         x = value;
     }
-
     public int getY(){
         return y;
     }
@@ -79,7 +85,14 @@ public class Chef {
         return texturePath;
     }
 
-    public Texture getTex(){
-        return new Texture(texturePath);
+    public Texture getTexture(int direction){
+        return tex.get(direction);
+    }
+
+    public int getDirection(){
+        return direction;
+    }
+    public void setDirection(int direction){
+        this.direction = direction;
     }
 }
