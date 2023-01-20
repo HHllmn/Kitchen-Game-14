@@ -6,8 +6,46 @@ import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Chef {
+    public enum Facing {
+        UP(0),
+        RIGHT(1),
+        DOWN(2),
+        LEFT(3);
+
+
+        private int value;
+        private static Map map = new HashMap<>();
+
+        private Facing(int value) {
+            this.value = value;
+        }
+
+        static {
+            for (Facing facing : Facing.values()) {
+                map.put(facing.value, facing);
+            }
+        }
+
+        public static Facing valueOf(int facing) {
+            return (Facing) map.get(facing);
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+
+
+
+
+
+
+
     //Initial Variables
     int x = 800 / 2 - 64 / 2;
     int y = 20;
@@ -18,7 +56,7 @@ public class Chef {
 
     private ArrayList<Texture> tex;
     private SpriteBatch batch;
-    private int direction;
+    private Facing direction;
 
     //Creates a chef with ChefNumber/ID as 0, then increments (so next ChefNumber is 1)
     static int ChefNumber = 0;
@@ -31,7 +69,7 @@ public class Chef {
         this.y = 0;
         this.width = 70;
         this.height = 70;
-        this.direction = 0;
+        this.direction = Facing.UP;
         //this.texturePath = "ChefUp.png";
         this.tex = new ArrayList<Texture>();
         this.tex.add(new Texture("ChefUp.png"));
@@ -85,14 +123,19 @@ public class Chef {
         return texturePath;
     }
 
-    public Texture getTexture(int direction){
-        return tex.get(direction);
+
+    public Texture getTexture(){
+        return getTexture(this.direction);
     }
 
-    public int getDirection(){
+    public Texture getTexture(Facing direction){
+        return tex.get(direction.getValue());
+    }
+
+    public Facing getDirection(){
         return direction;
     }
-    public void setDirection(int direction){
+    public void setDirection(Facing direction){
         this.direction = direction;
     }
 

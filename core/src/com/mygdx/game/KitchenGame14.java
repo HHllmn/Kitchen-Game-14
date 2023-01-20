@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.Input.*;
 import sun.jvm.hotspot.gc.shared.Space;
+import com.mygdx.game.Chef.Facing;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -70,12 +71,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 103 }
 	};
 
-	public enum Facing {
-		UP,
-		RIGHT,
-		DOWN,
-		LEFT
-	}
+
 
 	Texture img;
 	TiledMap tiledMap;
@@ -155,7 +151,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.begin();
 
 		for (int i = 0; i < ChefList.size(); i++) {
-			batch.draw(ChefList.get(i).getTex(), ChefList.get(i).x, ChefList.get(i).y, ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
+			batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).x, ChefList.get(i).y, ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
 		}
 
 		batch.draw(borderTex, TopBorder.x, TopBorder.y, TopBorder.getWidth(), TopBorder.getHeight());
@@ -209,19 +205,19 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public boolean keyUp(int keycode) {
 
 		if(keycode == Input.Keys.LEFT) {
-			ChefList.get(SelectedChef).setDirection(3);
+			ChefList.get(SelectedChef).setDirection(Facing.LEFT);
 			if (collisionCheck(ChefList.get(SelectedChef), Facing.LEFT)) ChefList.get(SelectedChef).translateChef(-70, 0);
 		}
 		if(keycode == Input.Keys.RIGHT) {
-			ChefList.get(SelectedChef).setDirection(1);
+			ChefList.get(SelectedChef).setDirection(Facing.RIGHT);
 			if (collisionCheck(ChefList.get(SelectedChef), Facing.RIGHT)) ChefList.get(SelectedChef).translateChef(70,0);
 		}
 		if(keycode == Input.Keys.UP) {
-			ChefList.get(SelectedChef).setDirection(0);
+			ChefList.get(SelectedChef).setDirection(Facing.UP);
 			if (collisionCheck(ChefList.get(SelectedChef), Facing.UP)) ChefList.get(SelectedChef).translateChef(0,70);
 		}
 		if(keycode == Input.Keys.DOWN) {
-			ChefList.get(SelectedChef).setDirection(2);
+			ChefList.get(SelectedChef).setDirection(Facing.DOWN);
 			if (collisionCheck(ChefList.get(SelectedChef), Facing.DOWN)) ChefList.get(SelectedChef).translateChef(0,-70);
 		}
 		if(keycode == Input.Keys.NUM_1)
