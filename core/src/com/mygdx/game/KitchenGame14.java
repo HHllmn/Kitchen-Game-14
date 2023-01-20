@@ -28,8 +28,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	private SpriteBatch batch; //Sprite batch which will use the ChefImage to display the character
 
 	//public ArrayList<Rectangle> RectangleList;
-	public Chef ChefA; //Creates ChefA Rectangle/Hitbox
-	public Chef ChefB;
+
+	ArrayList<Chef> ChefList = new ArrayList<>();
 	public int SelectedChef = 0;
 
 	public Rectangle TopBorder;
@@ -99,8 +99,11 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		batch = new SpriteBatch();
 
-		ChefA = new Chef();
-		ChefB = new Chef();
+
+		//Create Chefs rectangle
+		//ChefCount is the number of chefs created for the game
+		int ChefCount = 2;
+		for (int i = 0; i < ChefCount; i++) ChefList.add(new Chef());
 
 		TopBorder = new Rectangle(0, TileMapHeight, TileMapWidth, 25);
 		BottomBorder = new Rectangle(0, -25, TileMapWidth, 25);
@@ -108,6 +111,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		LeftBorder = new Rectangle(-20, -25, 20, TileMapHeight+50);
 
 
+			//Create List of Orders rectangle
 
 		OrdersList = new Rectangle(0, 0, 100, 50);
 		MenuItem1 = new Rectangle(0, 540 - 100, 100, 50);
@@ -150,13 +154,14 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		batch.begin();
 
-		batch.draw(ChefA.getTexture(ChefA.getDirection()), ChefA.x, ChefA.y, ChefA.getWidth(), ChefA.getHeight());
-		batch.draw(ChefB.getTexture(ChefA.getDirection()), ChefB.x, ChefB.y, ChefB.getWidth(), ChefB.getHeight());
+		for (int i = 0; i < ChefList.size(); i++) {
+			batch.draw(ChefList.get(i).getTex(), ChefList.get(i).x, ChefList.get(i).y, ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
+		}
+
 		batch.draw(borderTex, TopBorder.x, TopBorder.y, TopBorder.getWidth(), TopBorder.getHeight());
 		batch.draw(borderTex, BottomBorder.x, BottomBorder.y, BottomBorder.getWidth(), BottomBorder.getHeight());
 		batch.draw(borderTex, RightBorder.x, RightBorder.y, RightBorder.getWidth(), RightBorder.getHeight());
 		batch.draw(borderTex, LeftBorder.x, LeftBorder.y, LeftBorder.getWidth(), LeftBorder.getHeight());
-
 
 		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
 		//batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
@@ -164,17 +169,11 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.end();
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
-
-		//if(ChefA.x < 0) ChefA.x = 0;
-		//if(ChefA.x > 770 - ChefA.getWidth()) ChefA.x = 770 - ChefA.getWidth();
-		//if(ChefA.y < 0) ChefA.y = 0;
-		//if(ChefA.y > 490 - ChefA.getHeight()) ChefA.y = 490 - ChefA.getHeight();
-	}
-
+		}
 	public void SwitchChefs(){
 		//Subroutine to switch between chef;
-		if (SelectedChef == 0) SelectedChef++;
-		else if (SelectedChef == 1) SelectedChef--;
+		SelectedChef++;
+		if (SelectedChef > ChefList.size()-1) SelectedChef = 0;
 	}
 
 	//This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
@@ -210,20 +209,20 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public boolean keyUp(int keycode) {
 
 		if(keycode == Input.Keys.LEFT) {
-			ChefA.setDirection(3);
-			if (collisionCheck(ChefA, Facing.LEFT)) translateChef(ChefA, -70, 0);
+			ChefList.get(SelectedChef).setDirection(3);
+			if (collisionCheck(ChefList.get(SelectedChef), Facing.LEFT)) ChefList.get(SelectedChef).translateChef(-70, 0);
 		}
 		if(keycode == Input.Keys.RIGHT) {
-			ChefA.setDirection(1);
-			if (collisionCheck(ChefA, Facing.RIGHT)) translateChef(ChefA, 70, 0);
+			ChefList.get(SelectedChef).setDirection(1);
+			if (collisionCheck(ChefList.get(SelectedChef), Facing.RIGHT)) ChefList.get(SelectedChef).translateChef(70,0);
 		}
 		if(keycode == Input.Keys.UP) {
-			ChefA.setDirection(0);
-			if (collisionCheck(ChefA, Facing.UP)) translateChef(ChefA, 0, 70);
+			ChefList.get(SelectedChef).setDirection(0);
+			if (collisionCheck(ChefList.get(SelectedChef), Facing.UP)) ChefList.get(SelectedChef).translateChef(0,70);
 		}
 		if(keycode == Input.Keys.DOWN) {
-			ChefA.setDirection(2);
-			if (collisionCheck(ChefA, Facing.DOWN)) translateChef(ChefA, 0, -70);
+			ChefList.get(SelectedChef).setDirection(2);
+			if (collisionCheck(ChefList.get(SelectedChef), Facing.DOWN)) ChefList.get(SelectedChef).translateChef(0,-70);
 		}
 		if(keycode == Input.Keys.NUM_1)
 			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
