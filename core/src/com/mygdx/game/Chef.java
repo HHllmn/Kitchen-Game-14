@@ -2,7 +2,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -39,18 +38,12 @@ public class Chef {
         }
     }
 
-
-
-
-
-
-
-
     //Initial Variables
-    int x = 800 / 2 - 64 / 2;
-    int y = 20;
+    private Point tilePosition;
+    private Point cameraPosition;
     private int width;
     private int height;
+
 
     String texturePath;
 
@@ -65,8 +58,8 @@ public class Chef {
     }
     //0 is up, 1 is right, 2 is down, 3 is left
     public Chef(){
-        this.x = 8*70;
-        this.y = 0;
+        this.tilePosition = new Point(8, 0);
+        this.cameraPosition = new Point(tilePosition.x * KitchenGame14.TileSize, 0);
         this.width = 70;
         this.height = 70;
         this.direction = Facing.UP;
@@ -76,36 +69,75 @@ public class Chef {
         this.tex.add(new Texture("ChefRight.png"));
         this.tex.add(new Texture("ChefDown.png"));
         this.tex.add(new Texture("ChefLeft.png"));
+
     }
     public Chef(int xaxis, int yaxis, int w, int h){
         batch = new SpriteBatch();
-        this.x = xaxis;
-        this.y = yaxis;
+        this.cameraPosition.x = xaxis;
+        this.cameraPosition.y = yaxis;
         this.width = w;
         this.height = h;
         this.texturePath = "ChefUp.png";
     }
     public Chef(int xaxis, int yaxis, int w, int h, String tex){
             batch = new SpriteBatch();
-            this.x = xaxis;
-            this.y = yaxis;
+            this.cameraPosition.x = xaxis;
+            this.cameraPosition.y = yaxis;
             this.width = w;
             this.height = h;
             this.texturePath = tex;
     }
 
-    public int getX(){
-        return x;
+    public void InteractWith() {
+
+
+        if (direction == Facing.UP) {
+            int WorkStationToInteract = KitchenGame14.WorkStations[tilePosition.y + 1][tilePosition.x];
+
+        }
     }
-    public void setX(int value){
-        x = value;
+
+
+
+
+    public int getTileX(){
+        return tilePosition.x;
     }
-    public int getY(){
-        return y;
+    public void setTileX(int value){
+        tilePosition.x = value;
     }
-    public void setY(int value){
-        y = value;
+    public int getTileY(){ return tilePosition.y; }
+    public void setTileY(int value){ tilePosition.y = value; }
+    public Point getTilePos() { return this.tilePosition; }
+    public void setTilePos(int x, int y) { this.tilePosition.setLocation(x, y); }
+
+
+
+
+
+    public int getCameraX(){
+        return cameraPosition.x;
     }
+    public void setCameraX(int value){
+        cameraPosition.x = value;
+    }
+    public int getCameraY(){
+        return cameraPosition.y;
+    }
+    public void setCameraY(int value){
+        cameraPosition.y = value;
+    }
+    public Point getCameraPosition() { return this.cameraPosition; }
+    public void setCameraPosition(int x, int y) { this.cameraPosition.setLocation(x, y); }
+
+
+
+
+
+
+
+
+
 
     public void setTex(String tex){
         texturePath = tex;
@@ -139,8 +171,20 @@ public class Chef {
         this.direction = direction;
     }
 
+    //move the chef using pixel distance relative to the camera
     public void translateChef(int xmove, int ymove){
-        x += xmove;
-        y += ymove;
+        this.cameraPosition.x += xmove;
+        this.tilePosition.x += (xmove / 70);
+        this.cameraPosition.y += ymove;
+        this.tilePosition.y += (ymove / 70);
     }
+
+    //move the chef using number of tiles relative to his current position
+    public void MoveChef(int x, int y){
+        this.cameraPosition.x += x;
+        this.tilePosition.x += (x / 70);
+        this.cameraPosition.y += y;
+        this.tilePosition.y += (y / 70);
+    }
+
 }

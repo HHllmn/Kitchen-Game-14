@@ -14,13 +14,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 //import com.badlogic.gdx.audio.Music;
 //import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.Input.*;
-import sun.jvm.hotspot.gc.shared.Space;
 import com.mygdx.game.Chef.Facing;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class KitchenGame14 extends ApplicationAdapter implements InputProcessor {
@@ -61,7 +58,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	//Bin = 1, Plates = 2, DeliveryPoint = 6, Cutting board = 20-29, FryPan = 30-39, Oven = 40-49, Pantry = 100-199
 	//100 = lettuce, 101 = tomato, 102 = onion, 103 = beef, 104 = cheese, 105 = buns
-	public int[][] WorkStations = new int[][]{
+	static final int[][] WorkStations = new int[][]{
 			{ 0, 0, 0, 0, 0, 102, 105, 0, 0, 0, 1 },
 			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -70,8 +67,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 104 },
 			{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 103 }
 	};
-
-
 
 	Texture img;
 	TiledMap tiledMap;
@@ -121,8 +116,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	//	stage.getViewport().update(width, height, true);
 	//}
 
-
-
 	@Override
 	public void render () {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
@@ -151,7 +144,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.begin();
 
 		for (int i = 0; i < ChefList.size(); i++) {
-			batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).x, ChefList.get(i).y, ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
+			batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).getCameraX(), ChefList.get(i).getCameraY(), ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
 		}
 
 		batch.draw(borderTex, TopBorder.x, TopBorder.y, TopBorder.getWidth(), TopBorder.getHeight());
@@ -175,24 +168,26 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	//This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
 	// less than a second but incrementally move the chef over until its in the new space, like a sliding motion.
 	private void translateChef(Chef Chef, int x, int y) {
-		Chef.x = Chef.x + x;
-		Chef.y = Chef.y + y;
+		Chef.setCameraX(Chef.getCameraX() + x);
+		Chef.setCameraY(Chef.getCameraY() + y);
 	}
 
 	//0 up, 1 right, 2 down, 3 left
 	private boolean collisionCheck(Chef PlayerChef, Facing direction) {
+		boolean result = false;
+
 		int gridX = 0;
 		int gridY = 0;
 
-		if(PlayerChef.getX() != 0) gridX = (PlayerChef.getX() / TileSize);
-		if(PlayerChef.getY() != 0) gridY = (PlayerChef.getY() / TileSize);
+		if(PlayerChef.getCameraX() != 0) gridX = (PlayerChef.getTileX());
+		if(PlayerChef.getCameraY() != 0) gridY = (PlayerChef.getTileY());
 
-		if(direction == Facing.UP && (gridY != CollisionGrid.length - 1)) if(CollisionGrid[gridY + 1][gridX] == 0) return true; //Check if the currently selected chef can move up.
-		if(direction == Facing.RIGHT && (gridX != CollisionGrid[0].length - 1)) if(CollisionGrid[gridY][gridX + 1] == 0) return true; //move right.
-		if(direction == Facing.DOWN && (gridY != 0)) if(CollisionGrid[gridY - 1][gridX] == 0) return true; //move down.
-		if(direction == Facing.LEFT && (gridX != 0)) if(CollisionGrid[gridY][gridX - 1] == 0) return true; //move left.
+		if(direction == Facing.UP && (gridY != CollisionGrid.length - 1)) if(CollisionGrid[gridY + 1][gridX] == 0) result = true; //Check if the currently selected chef can interact with something facing up.
+		if(direction == Facing.RIGHT && (gridX != CollisionGrid[0].length - 1)) if(CollisionGrid[gridY][gridX + 1] == 0) result = true; //facing right.
+		if(direction == Facing.DOWN && (gridY != 0)) if(CollisionGrid[gridY - 1][gridX] == 0) result = true; //facing down.
+		if(direction == Facing.LEFT && (gridX != 0)) if(CollisionGrid[gridY][gridX - 1] == 0) result = true; //facing left.
 
-		return false;
+		return result;
 
 	}
 
@@ -206,7 +201,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		if(keycode == Input.Keys.LEFT) {
 			ChefList.get(SelectedChef).setDirection(Facing.LEFT);
-			if (collisionCheck(ChefList.get(SelectedChef), Facing.LEFT)) ChefList.get(SelectedChef).translateChef(-70, 0);
+			if (collisionCheck(ChefList.get(SelectedChef), Facing.LEFT)) {
+				ChefList.get(SelectedChef).translateChef(-70, 0);
+			}
 		}
 		if(keycode == Input.Keys.RIGHT) {
 			ChefList.get(SelectedChef).setDirection(Facing.RIGHT);
@@ -214,7 +211,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		}
 		if(keycode == Input.Keys.UP) {
 			ChefList.get(SelectedChef).setDirection(Facing.UP);
-			if (collisionCheck(ChefList.get(SelectedChef), Facing.UP)) ChefList.get(SelectedChef).translateChef(0,70);
+			if (collisionCheck(ChefList.get(SelectedChef), Facing.UP)) {
+				ChefList.get(SelectedChef).translateChef(0,70);
+			}
 		}
 		if(keycode == Input.Keys.DOWN) {
 			ChefList.get(SelectedChef).setDirection(Facing.DOWN);
@@ -224,7 +223,24 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
 		if(keycode == Input.Keys.NUM_2)
 			tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
-		if(keycode == Input.Keys.E) SwitchChefs();
+		if(keycode == Keys.SPACE) SwitchChefs();
+		if(keycode == Keys.E) if(VeryifyInteract()) ChefList.get(SelectedChef).InteractWith();
+		return false;
+	}
+
+	public boolean VeryifyInteract() {
+		int gridX = 0;
+		int gridY = 0;
+
+		if(ChefList.get(SelectedChef).getCameraX() != 0) gridX = (ChefList.get(SelectedChef).getCameraX() / TileSize);
+		if(ChefList.get(SelectedChef).getCameraY() != 0) gridY = (ChefList.get(SelectedChef).getCameraY() / TileSize);
+
+		if(ChefList.get(SelectedChef).getDirection() == Facing.UP && (gridY != WorkStations.length - 1)) if(WorkStations[gridY + 1][gridX] != 0) return true; //Check if the currently selected chef can move up.
+		if(ChefList.get(SelectedChef).getDirection() == Facing.RIGHT && (gridX != WorkStations[0].length - 1)) if(WorkStations[gridY][gridX + 1] != 0) return true; //move right.
+		if(ChefList.get(SelectedChef).getDirection() == Facing.DOWN && (gridY != 0)) if(WorkStations[gridY - 1][gridX] != 0) return true; //move down.
+		if(ChefList.get(SelectedChef).getDirection() == Facing.LEFT && (gridX != 0)) if(WorkStations[gridY][gridX - 1] != 0) return true; //move left.
+
+
 		return false;
 	}
 
