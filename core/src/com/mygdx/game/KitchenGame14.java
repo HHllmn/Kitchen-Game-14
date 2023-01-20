@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -77,6 +78,10 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	TiledMap tiledMap;
 	private TiledMapRenderer tiledMapRenderer;
 
+	//Creates the timer;
+	public Timer clock = new Timer(true);
+	BitmapFont font;
+
 
 		@Override
 	public void create () {
@@ -98,7 +103,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		//Create Chefs rectangle
 		//ChefCount is the number of chefs created for the game
-		int ChefCount = 2;
+		int ChefCount = 5;
 		for (int i = 0; i < ChefCount; i++) ChefList.add(new Chef());
 
 		TopBorder = new Rectangle(0, TileMapHeight, TileMapWidth, 25);
@@ -125,9 +130,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	@Override
 	public void render () {
+			clock.tick();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
-
 
 		ScreenUtils.clear(1, 0, 0, 1);
 
@@ -149,6 +154,12 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		Texture borderTex = new Texture("Border.png");
 
 		batch.begin();
+		font = new BitmapFont();
+		CharSequence str = clock.getTimeElapsed();
+		font.draw(batch, str,-150 , 500);
+		batch.end();
+
+		batch.begin();
 
 		for (int i = 0; i < ChefList.size(); i++) {
 			batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).x, ChefList.get(i).y, ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
@@ -158,6 +169,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.draw(borderTex, BottomBorder.x, BottomBorder.y, BottomBorder.getWidth(), BottomBorder.getHeight());
 		batch.draw(borderTex, RightBorder.x, RightBorder.y, RightBorder.getWidth(), RightBorder.getHeight());
 		batch.draw(borderTex, LeftBorder.x, LeftBorder.y, LeftBorder.getWidth(), LeftBorder.getHeight());
+
+
+
 
 		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
 		//batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
@@ -204,19 +218,19 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	@Override
 	public boolean keyUp(int keycode) {
 
-		if(keycode == Input.Keys.LEFT) {
+		if(keycode == Input.Keys.LEFT || keycode == Keys.A) {
 			ChefList.get(SelectedChef).setDirection(Facing.LEFT);
 			if (collisionCheck(ChefList.get(SelectedChef), Facing.LEFT)) ChefList.get(SelectedChef).translateChef(-70, 0);
 		}
-		if(keycode == Input.Keys.RIGHT) {
+		if(keycode == Input.Keys.RIGHT || keycode == Keys.D) {
 			ChefList.get(SelectedChef).setDirection(Facing.RIGHT);
 			if (collisionCheck(ChefList.get(SelectedChef), Facing.RIGHT)) ChefList.get(SelectedChef).translateChef(70,0);
 		}
-		if(keycode == Input.Keys.UP) {
+		if(keycode == Input.Keys.UP || keycode == Keys.W) {
 			ChefList.get(SelectedChef).setDirection(Facing.UP);
 			if (collisionCheck(ChefList.get(SelectedChef), Facing.UP)) ChefList.get(SelectedChef).translateChef(0,70);
 		}
-		if(keycode == Input.Keys.DOWN) {
+		if(keycode == Input.Keys.DOWN || keycode == Keys.S) {
 			ChefList.get(SelectedChef).setDirection(Facing.DOWN);
 			if (collisionCheck(ChefList.get(SelectedChef), Facing.DOWN)) ChefList.get(SelectedChef).translateChef(0,-70);
 		}
@@ -224,7 +238,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
 		if(keycode == Input.Keys.NUM_2)
 			tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
-		if(keycode == Input.Keys.E) SwitchChefs();
+		if(keycode == Keys.SPACE) SwitchChefs();
 		return false;
 	}
 
