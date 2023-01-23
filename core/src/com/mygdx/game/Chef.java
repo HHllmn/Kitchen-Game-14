@@ -50,6 +50,7 @@ public class Chef {
     private ArrayList<Texture> tex;
     private SpriteBatch batch;
     private Facing direction;
+    private ArrayList<Item> Inventory = new ArrayList<>();
 
     //Creates a chef with ChefNumber/ID as 0, then increments (so next ChefNumber is 1)
     static int ChefNumber = 0;
@@ -59,7 +60,7 @@ public class Chef {
     //0 is up, 1 is right, 2 is down, 3 is left
     public Chef(){
         this.tilePosition = new Point(8, 0);
-        this.cameraPosition = new Point(tilePosition.x * KitchenGame14.TileSize, 0);
+        this.cameraPosition = new Point(tilePosition.x * KitchenGame14.TILE_SIZE, 0);
         this.width = 70;
         this.height = 70;
         this.direction = Facing.UP;
@@ -88,32 +89,69 @@ public class Chef {
             this.texturePath = tex;
     }
 
+    //update this to be a switch statement.
     public void InteractWith() {
 
-
         if (direction == Facing.UP) {
-            int WorkStationToInteract = KitchenGame14.WorkStations[tilePosition.y + 1][tilePosition.x];
+            int WorkStationToInteract = KitchenGame14.WorkstationsGrid[tilePosition.y + 1][tilePosition.x];
+        }
+        else if (direction == Facing.RIGHT) {
+            int WorkStationToInteract = KitchenGame14.WorkstationsGrid[tilePosition.y][tilePosition.x + 1];
+
+        }
+        else if (direction == Facing.DOWN) {
+            int WorkStationToInteract = KitchenGame14.WorkstationsGrid[tilePosition.y - 1][tilePosition.x];
+
+        }
+        else if (direction == Facing.LEFT) {
+            int WorkStationToInteract = KitchenGame14.WorkstationsGrid[tilePosition.y][tilePosition.x - 1];
 
         }
     }
 
+    //public void translateChef(int x, int y){ //Description: move the chef using pixel distance relative to the camera
+    //    this.cameraPosition.x += x;
+    //    this.tilePosition.x += (x / 70);
+    //    this.cameraPosition.y += y;
+    //    this.tilePosition.y += (y / 70);
+    //}
 
 
+    //This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
+    // less than a second but incrementally move the chef over until its in the new space, like a sliding motion.
+    public void MoveChef(){ //Description: move the chef using number of tiles relative to his current position
+        switch(direction) {
+            case UP:
+                setTileY(tilePosition.y + 1);
+                break;
+            case RIGHT:
+                setTileX(tilePosition.x + 1);
+                break;
+            case DOWN:
+                setTileY(tilePosition.y - 1);
+                break;
+            case LEFT:
+                setTileX(tilePosition.x - 1);
+                break;
+        }
+    }
 
+
+    //region Get's and Set's
     public int getTileX(){
         return tilePosition.x;
     }
     public void setTileX(int value){
         tilePosition.x = value;
+        cameraPosition.x = value * KitchenGame14.TILE_SIZE;
     }
     public int getTileY(){ return tilePosition.y; }
-    public void setTileY(int value){ tilePosition.y = value; }
+    public void setTileY(int value){
+        tilePosition.y = value;
+        cameraPosition.y = value * KitchenGame14.TILE_SIZE;
+    }
     public Point getTilePos() { return this.tilePosition; }
     public void setTilePos(int x, int y) { this.tilePosition.setLocation(x, y); }
-
-
-
-
 
     public int getCameraX(){
         return cameraPosition.x;
@@ -130,23 +168,9 @@ public class Chef {
     public Point getCameraPosition() { return this.cameraPosition; }
     public void setCameraPosition(int x, int y) { this.cameraPosition.setLocation(x, y); }
 
-
-
-
-
-
-
-
-
-
-    public void setTex(String tex){
-        texturePath = tex;
-    }
-
     public int getWidth(){
         return width;
     }
-
     public int getHeight(){
         return height;
     }
@@ -154,12 +178,12 @@ public class Chef {
     public String getTexturePath() {
         return texturePath;
     }
-
-
+    public void setTexture(String tex){
+        texturePath = tex;
+    }
     public Texture getTexture(){
         return getTexture(this.direction);
     }
-
     public Texture getTexture(Facing direction){
         return tex.get(direction.getValue());
     }
@@ -171,20 +195,10 @@ public class Chef {
         this.direction = direction;
     }
 
-    //move the chef using pixel distance relative to the camera
-    public void translateChef(int xmove, int ymove){
-        this.cameraPosition.x += xmove;
-        this.tilePosition.x += (xmove / 70);
-        this.cameraPosition.y += ymove;
-        this.tilePosition.y += (ymove / 70);
+    public ArrayList<Item> getInventory() {
+        return Inventory;
     }
 
-    //move the chef using number of tiles relative to his current position
-    public void MoveChef(int x, int y){
-        this.cameraPosition.x += x;
-        this.tilePosition.x += (x / 70);
-        this.cameraPosition.y += y;
-        this.tilePosition.y += (y / 70);
-    }
+    //endregion Get's and Set's
 
 }
