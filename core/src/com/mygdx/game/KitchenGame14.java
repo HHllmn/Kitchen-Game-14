@@ -39,7 +39,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public Rectangle BottomBorder;
 	public Rectangle LeftBorder;
 
-	public Rectangle OrdersList; //Order list on the side of the screen
+	Texture borderTex = new Texture("Border.png");
+
 	public Rectangle MenuItem1; //Menu Item Number 1
 	public Rectangle Border; //Border Item
 
@@ -82,7 +83,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public Timer clock = new Timer(true);
 	BitmapFont font;
 
-
+	public ArrayList<Order> OrderList = new ArrayList<Order>();
 		@Override
 	public void create () {
 
@@ -113,8 +114,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 
 			//Create List of Orders rectangle
-
-		OrdersList = new Rectangle(0, 0, 100, 50);
 		MenuItem1 = new Rectangle(0, 540 - 100, 100, 50);
 		Border = new Rectangle(0, 540 - 110, 100, 50);
 		Oven = new Rectangle(170 + (70 * 4), 25 + (4*70), 70, 70);
@@ -143,15 +142,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
 
-		Texture ordersListTex = new Texture("MenuTesting.png");
-		OrdersList.width = ordersListTex.getWidth();
-		OrdersList.height = ordersListTex.getHeight();
 
-		Texture menuItem1Tex = new Texture("BurgerMenuItem.png");
-		MenuItem1.width = menuItem1Tex.getWidth();
-		MenuItem1.height = menuItem1Tex.getHeight();
-
-		Texture borderTex = new Texture("Border.png");
 
 		batch.begin();
 		font = new BitmapFont();
@@ -170,7 +161,10 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.draw(borderTex, RightBorder.x, RightBorder.y, RightBorder.getWidth(), RightBorder.getHeight());
 		batch.draw(borderTex, LeftBorder.x, LeftBorder.y, LeftBorder.getWidth(), LeftBorder.getHeight());
 
-
+		//CREATING THE ORDER LIST BY ITEMS INDIVIDUALLY
+		for (int i = 0; i < OrderList.size(); i++) {
+			batch.draw(orderlistTex, TopBorder.x - orderlistTex.getWidth(), TopBorder.y*i);
+		}
 
 
 		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
