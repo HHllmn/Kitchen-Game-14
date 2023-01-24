@@ -126,7 +126,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	//	stage.getViewport().update(width, height, true);
 	//}
 
-
+    //writing this to make another commit to merge
 
 	@Override
 	public void render () {
