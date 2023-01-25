@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+//merge somewhat reverted
+
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
