@@ -86,7 +86,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	BitmapFont font;
 
 	public ArrayList<Order> OrderList = new ArrayList<Order>();
-		@Override
+	@Override
 	public void create () {
 
 		float w = Gdx.graphics.getWidth();
@@ -115,7 +115,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		LeftBorder = new Rectangle(-20, -25, 20, TileMapHeight+50);
 
 
-			//Create List of Orders rectangle
+		//Create List of Orders rectangle
 		MenuItem1 = new Rectangle(0, 540 - 100, 100, 50);
 		Border = new Rectangle(0, 540 - 110, 100, 50);
 		Oven = new Rectangle(170 + (70 * 4), 25 + (4*70), 70, 70);
@@ -131,7 +131,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	@Override
 	public void render () {
-			clock.tick();
+		clock.tick();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
 
@@ -175,7 +175,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.end();
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
-		}
+	}
 	public void SwitchChefs(){
 		//Subroutine to switch between chef;
 		SelectedChef++;
