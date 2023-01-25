@@ -40,7 +40,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public Rectangle BottomBorder;
 	public Rectangle LeftBorder;
 
-	Texture borderTex = new Texture("Border.png");
+	Texture borderTex;
 
 	public Rectangle OrdersList; //Order list on the side of the screen
 	public Rectangle MenuItem1; //Menu Item Number 1
@@ -115,6 +115,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		//ChefCount is the number of chefs created for the game
 		int ChefCount = 2;
 		for (int i = 0; i < ChefCount; i++) ChefList.add(new Chef());
+
+		borderTex = new Texture("Border.png");
 
 		InitialiseTileGrid();
 
