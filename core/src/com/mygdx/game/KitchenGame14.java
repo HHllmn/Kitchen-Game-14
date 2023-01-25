@@ -162,9 +162,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.draw(borderTex, LeftBorder.x, LeftBorder.y, LeftBorder.getWidth(), LeftBorder.getHeight());
 
 		//CREATING THE ORDER LIST BY ITEMS INDIVIDUALLY
-		for (int i = 0; i < OrderList.size(); i++) {
-			batch.draw(orderlistTex, TopBorder.x - orderlistTex.getWidth(), TopBorder.y*i);
-		}
+		//for (int i = 0; i < OrderList.size(); i++) {
+		//	batch.draw(orderlistTex, TopBorder.x - orderlistTex.getWidth(), TopBorder.y*i);
+		//}
 
 
 		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
