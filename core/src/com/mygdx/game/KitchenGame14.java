@@ -1,10 +1,9 @@
 package com.mygdx.game;
 
-//reverted
-
 //region Imports
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -40,6 +39,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public Rectangle RightBorder;
 	public Rectangle BottomBorder;
 	public Rectangle LeftBorder;
+
+	Texture borderTex = new Texture("Border.png");
 
 	public Rectangle OrdersList; //Order list on the side of the screen
 	public Rectangle MenuItem1; //Menu Item Number 1
@@ -84,6 +85,12 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	private TiledMapRenderer tiledMapRenderer;
 	public Tile[][] tileGrid = new Tile[GRID_WIDTH][GRID_HEIGHT];
 
+
+	//Creates the timer;
+	public Timer clock = new Timer(true);
+	BitmapFont font;
+
+	public ArrayList<Order> OrderList = new ArrayList<Order>();
 	//endregion Properties
 
 	//region Main Methods
@@ -104,6 +111,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		batch = new SpriteBatch();
 
+		//Create Chefs rectangle
+		//ChefCount is the number of chefs created for the game
 		int ChefCount = 2;
 		for (int i = 0; i < ChefCount; i++) ChefList.add(new Chef());
 
@@ -114,14 +123,21 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		RightBorder = new Rectangle(TILE_MAP_WIDTH, -25, 40, MAP_HEIGHT +50);
 		LeftBorder = new Rectangle(-20, -25, 20, MAP_HEIGHT +50);
 
-
-		OrdersList = new Rectangle(0, 0, 100, 50);
+		//Create List of Orders rectangle
 		MenuItem1 = new Rectangle(0, 540 - 100, 100, 50);
 		Border = new Rectangle(0, 540 - 110, 100, 50);
 
 	}
+
+	//public void resize (int width, int height) {
+	//	stage.getViewport().update(width, height, true);
+	//}
+
+
+
 	@Override
 	public void render () {
+		clock.tick();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
 
@@ -135,15 +151,13 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
 
-		Texture ordersListTex = new Texture("MenuTesting.png");
-		OrdersList.width = ordersListTex.getWidth();
-		OrdersList.height = ordersListTex.getHeight();
 
-		Texture menuItem1Tex = new Texture("BurgerMenuItem.png");
-		MenuItem1.width = menuItem1Tex.getWidth();
-		MenuItem1.height = menuItem1Tex.getHeight();
 
-		Texture borderTex = new Texture("Border.png");
+		batch.begin();
+		font = new BitmapFont();
+		CharSequence str = clock.getTimeElapsed();
+		font.draw(batch, str,-150 , 500);
+		batch.end();
 
 		batch.begin();
 
@@ -155,6 +169,12 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.draw(borderTex, BottomBorder.x, BottomBorder.y, BottomBorder.getWidth(), BottomBorder.getHeight());
 		batch.draw(borderTex, RightBorder.x, RightBorder.y, RightBorder.getWidth(), RightBorder.getHeight());
 		batch.draw(borderTex, LeftBorder.x, LeftBorder.y, LeftBorder.getWidth(), LeftBorder.getHeight());
+
+		//CREATING THE ORDER LIST BY ITEMS INDIVIDUALLY
+		//for (int i = 0; i < OrderList.size(); i++) {
+		//	batch.draw(orderlistTex, TopBorder.x - orderlistTex.getWidth(), TopBorder.y*i);
+		//}
+
 
 		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
 		//batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
@@ -348,6 +368,5 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	}
 
 	//endregion Events
-
 
 }
