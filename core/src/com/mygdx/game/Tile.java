@@ -151,6 +151,9 @@ public class Tile {
     public Station getStation() {
         return tileStation;
     }
+    public void setStation(Station tileStation) {
+        this.tileStation = tileStation;
+    }
 
 
 

@@ -225,22 +225,22 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 							tileGrid[n][m] = new Tile(n, m, new Oven());
 							break;
 						case 800:// is a Lettuce Pantry
-							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.LETTUCE));
+							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.LETTUCE));
 							break;
 						case 801:// is a Tomato Pantry
-							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.TOMATO));
+							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.TOMATO));
 							break;
 						case 802:// is an Onion Pantry
-							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.ONION));
+							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.ONION));
 							break;
 						case 803:// is a Beef Pantry
-							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.BEEF));
+							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.BEEF));
 							break;
 						case 804:// is a Cheese Pantry
-							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.CHEESE));
+							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.CHEESE));
 							break;
 						case 805:// is a Buns Pantry
-							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.BUNS));
+							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.BUNS));
 							break;
 					}
 				}
@@ -283,23 +283,38 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		return result;
 	}
 
-	private Station GetStation(Chef Player) {
+	private ArrayList<Item> StationInteract(Chef Player) {
+		int stationX = Player.getTileX();
+		int stationY = Player.getTileY();
 
 		switch(Player.getDirection()) {
 			case UP:
-				tileGrid[Player.getTileX()][Player.getTileY() + 1].getStation();
+				stationY += 1;
 				break;
 			case RIGHT:
-				tileGrid[Player.getTileX() + 1][Player.getTileY()].getStation();
+				stationX += 1;
 				break;
 			case DOWN:
-				tileGrid[Player.getTileX()][Player.getTileY() - 1].getStation();
+				stationY -= 1;
 				break;
 			case LEFT:
-				tileGrid[Player.getTileX() - 1][Player.getTileY()].getStation();
+				stationX -= 1;
 				break;
 		}
+
+		Station currentStation = tileGrid[stationX][stationY].getStation();
+		ArrayList<Item> newInventory = currentStation.Interact(Player.getInventory());
+		tileGrid[stationX][stationY].setStation(currentStation);
+
+
 		return null;
+	}
+
+	static public void InventoryFull() {
+
+		int n = 1;
+
+		//Success!
 	}
 
 
@@ -335,7 +350,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		//if(keycode == Input.Keys.NUM_1) tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
 		//if(keycode == Input.Keys.NUM_2) tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
 		if(keycode == Keys.SPACE) SwitchChefs();
-		if(keycode == Keys.E) if(VerifyInteract(ChefList.get(SelectedChef))) GetStation(ChefList.get(SelectedChef)).Interact(ChefList.get(SelectedChef).getInventory());
+		if(keycode == Keys.E) if(VerifyInteract(ChefList.get(SelectedChef))) {
+			ChefList.get(SelectedChef).setInventory(StationInteract(ChefList.get(SelectedChef)));
+		}
 		return false;
 	}
 

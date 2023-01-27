@@ -1,26 +1,5 @@
 package com.mygdx.game;
 
-enum ItemType {
-    LETTUCE,
-    TOMATO,
-    ONION,
-    BEEF,
-    CHEESE,
-    BUNS,
-    PLATE;
-}
 
+interface Item { }
 
-public class Item {
-
-    ItemType type;
-
-    public Item(ItemType type) {
-        this.type = type;
-    }
-
-
-
-
-
-}

@@ -198,6 +198,9 @@ public class Chef {
     public ArrayList<Item> getInventory() {
         return Inventory;
     }
+    public void setInventory(ArrayList<Item> inventory) {
+        this.Inventory = inventory;
+    }
 
     //endregion Get's and Set's
 
