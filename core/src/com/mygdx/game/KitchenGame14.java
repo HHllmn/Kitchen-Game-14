@@ -113,7 +113,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		//Create Chefs rectangle
 		//ChefCount is the number of chefs created for the game
-		int ChefCount = 2;
+		int ChefCount = 10;
 		for (int i = 0; i < ChefCount; i++) ChefList.add(new Chef());
 
 		borderTex = new Texture("Border.png");
@@ -257,7 +257,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		if(n > 0) {
 			if(WorkstationsGrid[n][m] > 0) tileGrid[n-1][m].setRightOfMe(true);
 			if(WorkstationsGrid[n-1][m] > 0) tileGrid[n][m].setLeftOfMe(true);
-
 		}
 		if(m > 0) {
 			if(WorkstationsGrid[n][m] > 0) tileGrid[n][m-1].setAboveMe(true);
@@ -305,9 +304,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		Station currentStation = tileGrid[stationX][stationY].getStation();
 		ArrayList<Item> newInventory = currentStation.Interact(Player.getInventory());
 		tileGrid[stationX][stationY].setStation(currentStation);
-
-
-		return null;
+		return newInventory;
 	}
 
 	static public void InventoryFull() {

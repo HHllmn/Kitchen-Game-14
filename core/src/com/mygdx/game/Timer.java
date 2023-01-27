@@ -18,7 +18,7 @@ public class Timer {
         if (running == true){
             milliElapsed++;
         }
-        if (milliElapsed == 100){
+        if (milliElapsed == 60){
             secondsElapsed++;
             milliElapsed = 0;
         }

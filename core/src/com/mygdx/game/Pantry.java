@@ -19,7 +19,7 @@ public class Pantry implements Station {
     }
 
     public ArrayList<Item> Interact(ArrayList<Item> inventory) {
-        KitchenGame14.InventoryFull();
+        //KitchenGame14.InventoryFull();
 
         //inventory needs to be initialized in the chef
         inventory.add(0, new Ingredient(pantryType));
