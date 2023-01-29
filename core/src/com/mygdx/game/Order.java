@@ -1,10 +1,8 @@
 package com.mygdx.game;
 
-import com.sun.org.apache.xalan.internal.xsltc.dom.KeyIndex;
-import sun.jvm.hotspot.types.CIntegerField;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 
-import java.time.*;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,15 +12,25 @@ public class Order {
     int x = -20; //Where on the x-axis the orders appear
     Random rd = new Random();
     int MaxItems = 1; //MaxItems is the maximum possible number of items which can be in an order.
-    int ListLen = rd.nextInt(MaxItems); //Length of the order, number of items
-    int[] ItemList = new int[0]; //Array of all possible item IDs (0 is currently a placeholder)
+    // int ListLen = rd.nextInt(MaxItems); //Length of the order, number of items
+    int ListLen = 1;
+    int[] ItemList = new int[10]; //Array of all possible item IDs (0 is currently a placeholder)
+    int TimeArrived = KitchenGame14.clock.getTotalTime();
+    String OrderBackgroundPath = "OrderImage.png";
+    Texture texOrderBackground = new Texture(OrderBackgroundPath);
+    String OrderForegroundPath = "Cheese.png";
+    Texture texOrderForeground = new Texture(OrderForegroundPath);
+    Texture tex;
+    int OrderScreenWidth = 130;
+    int OrderScreenHeight = 100 * ListLen;
 
-    String TimeMade; //NEEDS TO HAVE LOCAL TIME ON PC WHEN MADE
     {
         //Creates a list of length ListLen (which is a random int), containing random numbers
         for (int i = 0; i < ListLen; i++) {
-            Item.add(rd.nextInt(1,ItemList.length));
+            Item.add(ItemList[rd.nextInt(ItemList.length)]);
         }
+        if (ListLen < 1) OrderScreenHeight = 100;
+        tex = combineTextures(texOrderBackground,texOrderForeground);
 
     }
     public Order(){
@@ -64,5 +72,18 @@ public class Order {
             }
         }
         return itemfound;
+    }
+
+    public int getHeight(){return OrderScreenHeight;}
+    public int getWidth(){return OrderScreenWidth;}
+
+    private static Texture combineTextures(Texture background, Texture foreground){
+        background.getTextureData().prepare();
+        Pixmap pixmapA = background.getTextureData().consumePixmap();
+        foreground.getTextureData().prepare();
+        Pixmap pixmapB = foreground.getTextureData().consumePixmap();
+        pixmapA.drawPixmap(pixmapB,(background.getWidth()/2 - foreground.getWidth()/2),(background.getHeight()/2 - foreground.getHeight()/2));
+        Texture texOut = new Texture(pixmapA);
+        return texOut;
     }
 }
