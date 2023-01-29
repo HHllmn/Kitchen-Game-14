@@ -10,19 +10,22 @@ public class Grill implements Station {
     }
 
     private boolean isCooking;
-    private Item contents;
+    private Ingredient contents;
 
     public Grill() {
-        this.isCooking = true;
+        this.isCooking = false;
+        this.contents = null;
     }
 
     public ArrayList<Item> Interact(ArrayList<Item> inventory) {
         if(this.contents == null) {
             if(inventory != null && inventory.size() > 0) {
-                if(inventory.get(0).getIsIngredient()) {
-                    this.contents = inventory.get(0);
-                    inventory.remove(0);
-                    isCooking = true;
+                if(inventory.get(0).getClass().equals(new Ingredient().getClass())) {
+                    if(Ingredient.isCorrectIngredient(inventory.get(0), Ingredient.IngredientType.BEEF_PATTY) && !Ingredient.isItCooked(inventory.get(0))) {
+                        this.contents = (Ingredient) inventory.get(0);
+                        inventory.remove(0);
+                        isCooking = true;
+                    }
                 }
             }
 
@@ -42,4 +45,14 @@ public class Grill implements Station {
 
         return inventory;
     }
+
+    public boolean getIsProcessing() {
+        return this.isCooking;
+    }
+
+
+    public Ingredient getContents() {
+        return this.contents;
+    }
+
 }

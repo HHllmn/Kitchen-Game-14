@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.Input.*;
 import com.mygdx.game.Chef.Facing;
+import com.mygdx.game.Ingredient.IngredientType;
 
 import java.util.ArrayList;
 //endregion Imports
@@ -41,6 +42,10 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public Rectangle LeftBorder;
 
 	Texture borderTex;
+
+
+	private ArrayList<Texture> StationProcessingTexture = new ArrayList<>();
+	private ArrayList<Rectangle> StationProcessingRectangle = new ArrayList<>();
 
 	public Rectangle OrdersList; //Order list on the side of the screen
 	public Rectangle MenuItem1; //Menu Item Number 1
@@ -79,6 +84,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			{ 0, 0, 0, 0, 0, 0, 0},
 			{ 2, 1, 1, 800, 801, 804, 803}
 	};
+
+	public int[] cookingStations;
 
 	Texture img;
 	private TiledMap tiledMap;
@@ -166,6 +173,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		for (int i = 0; i < ChefList.size(); i++) {
 			batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).getCameraX(), ChefList.get(i).getCameraY(), ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
 		}
+		for (int i = 0; i < StationProcessingTexture.size(); i++) {
+			batch.draw(StationProcessingTexture.get(i), StationProcessingRectangle.get(i).x, StationProcessingRectangle.get(i).y, StationProcessingRectangle.get(i).getWidth(), StationProcessingRectangle.get(i).getHeight());
+		}
 
 		batch.draw(borderTex, TopBorder.x, TopBorder.y, TopBorder.getWidth(), TopBorder.getHeight());
 		batch.draw(borderTex, BottomBorder.x, BottomBorder.y, BottomBorder.getWidth(), BottomBorder.getHeight());
@@ -234,7 +244,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.ONION));
 							break;
 						case 803:// is a Beef Pantry
-							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.BEEF));
+							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.BEEF_PATTY));
 							break;
 						case 804:// is a Cheese Pantry
 							tileGrid[n][m] = new Tile(n, m, new Pantry(Ingredient.IngredientType.CHEESE));
@@ -266,6 +276,14 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	//endregion Initialisation Methods
 
 	//region Other Methods
+
+	//displays cooking asset
+	private void isCooking() {
+
+
+
+	}
+
 	public void SwitchChefs(){
 		//Subroutine to switch between chef;
 		SelectedChef++;
@@ -304,6 +322,48 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		Station currentStation = tileGrid[stationX][stationY].getStation();
 		ArrayList<Item> newInventory = currentStation.Interact(Player.getInventory());
 		tileGrid[stationX][stationY].setStation(currentStation);
+
+		if(currentStation.getClass().equals(new Grill().getClass())) {
+			if(((Grill) currentStation).getIsProcessing()) {
+				switch(((Grill) currentStation).getContents().getIngredientType()) {
+					case BEEF_PATTY:
+						StationProcessingTexture.add(new Texture("GrillProcess.png"));
+						break;
+				}
+				StationProcessingRectangle.add(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+			}
+			else if(StationProcessingRectangle.contains(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE))){
+				StationProcessingTexture.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+				StationProcessingRectangle.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+			}
+		}
+		else if(currentStation.getClass().equals(new Oven().getClass())) {
+			if(((Oven) currentStation).getIsProcessing()) {
+				if (((Oven) currentStation).getContents().getIngredientType() == IngredientType.LETTUCE || 1 == 1) {
+					StationProcessingTexture.add(new Texture("OvenProcess.png"));
+					StationProcessingRectangle.add(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+				}
+			}
+			else if(StationProcessingRectangle.contains(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE))){
+				StationProcessingTexture.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+				StationProcessingRectangle.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+			}
+		}
+		else if(currentStation.getClass().equals(new CuttingBoard().getClass())) {
+			if(((CuttingBoard) currentStation).getIsProcessing()) {
+				switch(((CuttingBoard) currentStation).getContents().getIngredientType()) {
+					case CHEESE:
+						StationProcessingTexture.add(new Texture("CuttingBoardProcess.png"));
+						break;
+				}
+				StationProcessingRectangle.add(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+			}
+			else if(StationProcessingRectangle.contains(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE))){
+				StationProcessingTexture.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+				StationProcessingRectangle.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+			}
+		}
+
 		return newInventory;
 	}
 

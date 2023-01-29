@@ -14,9 +14,15 @@ public class DeliveryPoint implements Station {
     }
 
     public ArrayList<Item> Interact(ArrayList<Item> inventory) {
-
+        if(inventory != null && inventory.size() > 0) {
+            if (inventory.get(0).getClass().equals(new Plate().getClass())) {
+                //Success!! Item Delivered.
+                inventory.remove(0);
+                return inventory;
+            }
+        }
+        //throw visual error, food isn't plated!
         return inventory;
     }
-
 
 }

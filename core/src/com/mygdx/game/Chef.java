@@ -58,7 +58,7 @@ public class Chef {
         ChefNumber += 1;
     }
     //0 is up, 1 is right, 2 is down, 3 is left
-    public Chef(){
+    public Chef() {
         this.tilePosition = new Point(8, 0);
         this.cameraPosition = new Point(tilePosition.x * KitchenGame14.TILE_SIZE, 0);
         this.width = 70;
