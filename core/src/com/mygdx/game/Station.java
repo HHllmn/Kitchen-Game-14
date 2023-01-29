@@ -1,9 +1,22 @@
 package com.mygdx.game;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-interface Station {
-    public ArrayList<Item> Interact(ArrayList<Item> inventory); //interface method to handle
+enum StationType {
+    BIN,
+    CUTTING_BOARD,
+    GRILL,
+    DELIVERY_POINT,
+    OVEN,
+    PLATE_STACK,
+    PANTRY;
 }
+public interface Station {
+
+    public Inventory Interact(Inventory inventory); //interface method to handle
+    StationType stationType = null;
+    public boolean equals(StationType type);
+
+}
+
+

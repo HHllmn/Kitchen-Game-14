@@ -8,14 +8,27 @@ public class Bin implements Station {
     {
         BinID += 1;
     }
+    private StationType stationType;
 
     public Bin() {
+        this.stationType = StationType.BIN;
 
     }
 
-    public ArrayList<Item> Interact(ArrayList<Item> inventory) {
-
+    @Override
+    public Inventory Interact(Inventory inventory) {
+        inventory = new Inventory();
+        //throw visual error, food isn't plated!
         return inventory;
+    }
+
+
+
+
+
+    @Override
+    public boolean equals(StationType type) {
+        return this.stationType == type;
     }
 
 }

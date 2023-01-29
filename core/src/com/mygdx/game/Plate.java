@@ -1,10 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.Texture;
-
-import java.awt.*;
-import java.util.ArrayList;
-
 public class Plate implements Item {
 
     public enum MealType {
@@ -14,17 +9,25 @@ public class Plate implements Item {
         JACKET_POTATO;
     }
 
-    private MealType Type;
+    private MealType mealType;
+    private ItemType itemType;
 
-    public Plate(MealType type){
-        this.Type = type;
+
+    public Plate(MealType mealType){
+        this.mealType = mealType;
+        this.itemType = ItemType.PLATE;
     }
 
     public Plate() {
-        this.Type = null;
+        this.mealType = null;
+        this.itemType = ItemType.PLATE;
     }
 
     public MealType getMealType() {
-        return this.Type;
+        return this.mealType;
     }
+
+    public ItemType getItemType() {
+        return this.itemType;
+    };
 }

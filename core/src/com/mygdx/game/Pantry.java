@@ -13,17 +13,26 @@ public class Pantry implements Station {
     {
         PantryID += 1;
     }
+    private StationType stationType;
 
     public Pantry(Ingredient.IngredientType pantryType) {
         this.pantryType = pantryType;
     }
 
-    public ArrayList<Item> Interact(ArrayList<Item> inventory) {
+    @Override
+    public Inventory Interact(Inventory inventory) {
         //KitchenGame14.InventoryFull();
 
         //inventory needs to be initialized in the chef
-        inventory.add(0, new Ingredient(pantryType));
+        inventory.add(new Ingredient(pantryType));
 
         return inventory;
     }
+
+
+    @Override
+    public boolean equals(StationType type) {
+        return this.stationType == type;
+    }
+
 }

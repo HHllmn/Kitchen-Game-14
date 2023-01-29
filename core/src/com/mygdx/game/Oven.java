@@ -1,22 +1,22 @@
 package com.mygdx.game;
 
-import java.util.ArrayList;
-
 public class Oven implements Station {
 
     static int OvenID = 1; //Exists to identify the class for Debugging
     {
         OvenID += 1;
     }
+    private StationType stationType;
 
-    private boolean isCooking;
+    private boolean isProcessing;
     private Ingredient contents;
 
     public Oven() {
-        this.isCooking = false;
+        this.isProcessing = false;
     }
 
-    public ArrayList<Item> Interact(ArrayList<Item> inventory) {
+    @Override
+    public Inventory Interact(Inventory inventory) {
 
         if(this.contents == null) {
             //if(inventory != null && inventory.size() > 0) {
@@ -25,25 +25,32 @@ public class Oven implements Station {
                     //    this.contents = (Ingredient) inventory.get(0);
                     //    inventory.remove(0);
                         contents = new Ingredient();
-                        isCooking = true;
+                        isProcessing = true;
                     //}
                 //}
             //}
         }
         else {
             contents = null;
-            isCooking = false;
+            isProcessing = false;
         }
         return inventory;
     }
 
 
     public boolean getIsProcessing() {
-        return this.isCooking;
+        return this.isProcessing;
     }
 
     public Ingredient getContents() {
         return this.contents;
+    }
+
+
+
+    @Override
+    public boolean equals(StationType type) {
+        return this.stationType == type;
     }
 
 

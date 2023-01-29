@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import java.util.ArrayList;
-
 public class Grill implements Station {
 
     static int GrillID = 1; //Exists to identify the class for Debugging
@@ -9,50 +7,72 @@ public class Grill implements Station {
         GrillID += 1;
     }
 
-    private boolean isCooking;
+    private boolean isProcessing;
+    private StationType stationType;
     private Ingredient contents;
 
     public Grill() {
-        this.isCooking = false;
+        this.stationType = StationType.GRILL;
+        this.isProcessing = false;
         this.contents = null;
     }
 
-    public ArrayList<Item> Interact(ArrayList<Item> inventory) {
-        if(this.contents == null) {
-            if(inventory != null && inventory.size() > 0) {
-                if(inventory.get(0).getClass().equals(new Ingredient().getClass())) {
-                    if(Ingredient.isCorrectIngredient(inventory.get(0), Ingredient.IngredientType.BEEF_PATTY) && !Ingredient.isItCooked(inventory.get(0))) {
-                        this.contents = (Ingredient) inventory.get(0);
-                        inventory.remove(0);
-                        isCooking = true;
+    private boolean isAllowedIngredient(Item item) {
+        boolean result = false;
+        if(item.getItemType() == ItemType.INGREDIENT){
+            Ingredient ingredient = (Ingredient) item;
+            if(ingredient.isItCooked() == false){
+                result = ingredient.getIngredientType() == Ingredient.IngredientType.BEEF_PATTY;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Inventory Interact(Inventory items) {
+        if(this.contents == null && this.isProcessing == false) {
+            if(items.isNotEmpty()) {
+                if(items.contains(ItemType.INGREDIENT)) {
+                    if(isAllowedIngredient(items.getFirstItem())) {
+                        this.contents = (Ingredient) items.getFirstItem();
+                        items.removeFirstItem();
+                        isProcessing = true;
                     }
                 }
             }
-
         }
-        else if(inventory.size() < 5 && this.contents != null) {
-            if(isCooking) {
-                contents.setCooked(true);
-                inventory.add(0, contents);
-                this.contents = null;
-                isCooking = false;
+        else if(items.isNotfull()) {
+            if (this.isProcessing) {
+                items = setResults(items);
             }
         }
         else {
             //throw ui statement about full inventory
         }
+        return items;
+    }
 
-
-        return inventory;
+    private Inventory setResults(Inventory items) {
+        contents.setCooked(true);
+        items.add(contents);
+        this.contents = null;
+        isProcessing = false;
+        return items;
     }
 
     public boolean getIsProcessing() {
-        return this.isCooking;
+        return this.isProcessing;
     }
 
 
     public Ingredient getContents() {
         return this.contents;
+    }
+
+
+    @Override
+    public boolean equals(StationType type) {
+        return this.stationType == type;
     }
 
 }

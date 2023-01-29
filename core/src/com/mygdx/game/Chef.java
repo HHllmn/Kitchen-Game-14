@@ -14,25 +14,19 @@ public class Chef {
         RIGHT(1),
         DOWN(2),
         LEFT(3);
-
-
         private int value;
         private static Map map = new HashMap<>();
-
         private Facing(int value) {
             this.value = value;
         }
-
         static {
             for (Facing facing : Facing.values()) {
                 map.put(facing.value, facing);
             }
         }
-
         public static Facing valueOf(int facing) {
             return (Facing) map.get(facing);
         }
-
         public int getValue() {
             return value;
         }
@@ -50,7 +44,7 @@ public class Chef {
     private ArrayList<Texture> tex;
     private SpriteBatch batch;
     private Facing direction;
-    private ArrayList<Item> Inventory = new ArrayList<>();
+    private Inventory inventory = new Inventory();
 
     //Creates a chef with ChefNumber/ID as 0, then increments (so next ChefNumber is 1)
     static int ChefNumber = 0;
@@ -195,11 +189,11 @@ public class Chef {
         this.direction = direction;
     }
 
-    public ArrayList<Item> getInventory() {
-        return Inventory;
+    public Inventory getInventory() {
+        return inventory;
     }
-    public void setInventory(ArrayList<Item> inventory) {
-        this.Inventory = inventory;
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 
     //endregion Get's and Set's

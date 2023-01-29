@@ -1,9 +1,16 @@
 package com.mygdx.game;
 
 
-import java.util.ArrayList;
-
+enum ItemType {
+    INGREDIENT,
+    PLATE;
+}
 interface Item {
+
+
+    ItemType type = null;
+    public abstract ItemType getItemType();
+
 
 }
 

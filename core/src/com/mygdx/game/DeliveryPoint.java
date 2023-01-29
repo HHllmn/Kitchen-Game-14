@@ -8,12 +8,14 @@ public class DeliveryPoint implements Station {
     {
         DeliveryPointID += 1;
     }
+    private StationType stationType;
 
     public DeliveryPoint() {
 
     }
 
-    public ArrayList<Item> Interact(ArrayList<Item> inventory) {
+    @Override
+    public Inventory Interact(Inventory inventory) {
         if(inventory != null && inventory.size() > 0) {
             if (inventory.get(0).getClass().equals(new Plate().getClass())) {
                 //Success!! Item Delivered.
@@ -23,6 +25,11 @@ public class DeliveryPoint implements Station {
         }
         //throw visual error, food isn't plated!
         return inventory;
+    }
+
+    @Override
+    public boolean equals(StationType type) {
+        return this.stationType == type;
     }
 
 }

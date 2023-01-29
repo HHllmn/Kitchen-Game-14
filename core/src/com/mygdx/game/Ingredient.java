@@ -14,11 +14,13 @@ public class Ingredient implements Item {
         BUNS;
     }
 
+    private ItemType itemType;
     private IngredientType ingredientType;
 
     public Ingredient() {
         this.ingredientType = IngredientType.LETTUCE;
         this.isCooked = false;
+        this.itemType = ItemType.INGREDIENT;
 
     }
 
@@ -32,28 +34,26 @@ public class Ingredient implements Item {
         else {
             this.isPrepared = true;
         }
+        this.itemType = ItemType.INGREDIENT;
     }
 
     public Ingredient(IngredientType type, boolean finished) {
         this.ingredientType = type;
         setPrepared(finished);
+        this.itemType = ItemType.INGREDIENT;
 
     }
 
     public void setCooked(boolean cooked) {
         this.isCooked = cooked;
-        isItPrepared();
+        checkIfPrepared();
     }
     public void setChopped(boolean chopped) {
         this.isChopped = chopped;
-        isItPrepared();
+        checkIfPrepared();
     }
 
-    public IngredientType getIngredientType() {
-        return this.ingredientType;
-    }
-
-    public boolean getIsItPrepared() {
+    public boolean isItPrepared() {
         return this.isPrepared;
     }
 
@@ -77,7 +77,7 @@ public class Ingredient implements Item {
         }
     }
 
-    private void isItPrepared() {
+    private void checkIfPrepared() {
         switch (ingredientType) {
             case LETTUCE:
             case TOMATO:
@@ -102,7 +102,7 @@ public class Ingredient implements Item {
         return this.isCooked;
     }
 
-    static boolean isCorrectIngredient(Item ingredient, IngredientType type) {
+    static boolean isIt(Item ingredient, IngredientType type) {
         return ((Ingredient) ingredient).getIngredientType() == type;
     }
 
@@ -114,6 +114,12 @@ public class Ingredient implements Item {
     }
 
 
+    public IngredientType getIngredientType() {
+        return this.ingredientType;
+    }
 
+    public ItemType getItemType() {
+        return this.itemType;
+    };
 
 }

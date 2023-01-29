@@ -44,14 +44,15 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	Texture borderTex;
 
 
-	private ArrayList<Texture> StationProcessingTexture = new ArrayList<>();
-	private ArrayList<Rectangle> StationProcessingRectangle = new ArrayList<>();
+	private ArrayList<Texture> StationProcessingTextures = new ArrayList<>();
+	private ArrayList<Rectangle> StationProcessingRectangles = new ArrayList<>();
+	private ArrayList<Texture> InventoryTextures = new ArrayList<>();
 
 	public Rectangle OrdersList; //Order list on the side of the screen
 	public Rectangle MenuItem1; //Menu Item Number 1
 	public Rectangle Border; //Border Item
 
-	static final int MAP_HEIGHT = 490; //Number of pixels tall the map is
+	static final int TILE_MAP_HEIGHT = 490; //Number of pixels tall the map is
 	static final int TILE_MAP_WIDTH = 770; //Number of pixels wide the map is
 	static final int TILE_SIZE = 70; //Multiply tile position by this to get the pixel position
 
@@ -120,17 +121,17 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		//Create Chefs rectangle
 		//ChefCount is the number of chefs created for the game
-		int ChefCount = 10;
+		int ChefCount = 2;
 		for (int i = 0; i < ChefCount; i++) ChefList.add(new Chef());
 
 		borderTex = new Texture("Border.png");
 
 		InitialiseTileGrid();
 
-		TopBorder = new Rectangle(0, MAP_HEIGHT, TILE_MAP_WIDTH, 25);
+		TopBorder = new Rectangle(0, TILE_MAP_HEIGHT, TILE_MAP_WIDTH, 25);
 		BottomBorder = new Rectangle(0, -25, TILE_MAP_WIDTH, 25);
-		RightBorder = new Rectangle(TILE_MAP_WIDTH, -25, 40, MAP_HEIGHT +50);
-		LeftBorder = new Rectangle(-20, -25, 20, MAP_HEIGHT +50);
+		RightBorder = new Rectangle(TILE_MAP_WIDTH, -25, 40, TILE_MAP_HEIGHT +50);
+		LeftBorder = new Rectangle(-20, -25, 20, TILE_MAP_HEIGHT +50);
 
 		//Create List of Orders rectangle
 		MenuItem1 = new Rectangle(0, 540 - 100, 100, 50);
@@ -170,18 +171,20 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 		batch.begin();
 
-		for (int i = 0; i < ChefList.size(); i++) {
-			batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).getCameraX(), ChefList.get(i).getCameraY(), ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
-		}
-		for (int i = 0; i < StationProcessingTexture.size(); i++) {
-			batch.draw(StationProcessingTexture.get(i), StationProcessingRectangle.get(i).x, StationProcessingRectangle.get(i).y, StationProcessingRectangle.get(i).getWidth(), StationProcessingRectangle.get(i).getHeight());
-		}
-
 		batch.draw(borderTex, TopBorder.x, TopBorder.y, TopBorder.getWidth(), TopBorder.getHeight());
 		batch.draw(borderTex, BottomBorder.x, BottomBorder.y, BottomBorder.getWidth(), BottomBorder.getHeight());
 		batch.draw(borderTex, RightBorder.x, RightBorder.y, RightBorder.getWidth(), RightBorder.getHeight());
 		batch.draw(borderTex, LeftBorder.x, LeftBorder.y, LeftBorder.getWidth(), LeftBorder.getHeight());
 
+		for (int i = 0; i < ChefList.size(); i++) {
+			batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).getCameraX(), ChefList.get(i).getCameraY(), ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
+		}
+		for (int i = 0; i < StationProcessingTextures.size(); i++) {
+			batch.draw(StationProcessingTextures.get(i), StationProcessingRectangles.get(i).x, StationProcessingRectangles.get(i).y, StationProcessingRectangles.get(i).getWidth(), StationProcessingRectangles.get(i).getHeight());
+		}
+		for (int i = 0; i < InventoryTextures.size(); i++) {
+			batch.draw(InventoryTextures.get(i), RightBorder.x + 2, (TILE_MAP_HEIGHT - 70) - (i * 75), TILE_SIZE / 2, TILE_SIZE / 2);
+		}
 		//CREATING THE ORDER LIST BY ITEMS INDIVIDUALLY
 		//for (int i = 0; i < OrderList.size(); i++) {
 		//	batch.draw(orderlistTex, TopBorder.x - orderlistTex.getWidth(), TopBorder.y*i);
@@ -300,7 +303,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		return result;
 	}
 
-	private ArrayList<Item> StationInteract(Chef Player) {
+	private Inventory StationInteract(Chef Player) {
 		int stationX = Player.getTileX();
 		int stationY = Player.getTileY();
 
@@ -319,53 +322,76 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 				break;
 		}
 
+		//change so that station is passing the chef inventory to assign back to the chef.
 		Station currentStation = tileGrid[stationX][stationY].getStation();
-		ArrayList<Item> newInventory = currentStation.Interact(Player.getInventory());
+		if(currentStation == null) return Player.getInventory();
+		Inventory newInventory = currentStation.Interact(Player.getInventory());
 		tileGrid[stationX][stationY].setStation(currentStation);
 
-		if(currentStation.getClass().equals(new Grill().getClass())) {
+
+
+		if(currentStation.equals(StationType.GRILL)) {
 			if(((Grill) currentStation).getIsProcessing()) {
 				switch(((Grill) currentStation).getContents().getIngredientType()) {
 					case BEEF_PATTY:
-						StationProcessingTexture.add(new Texture("GrillProcess.png"));
+						AddStationProcess("GrillProcess.png", stationX, stationY);
 						break;
 				}
-				StationProcessingRectangle.add(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+
 			}
-			else if(StationProcessingRectangle.contains(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE))){
-				StationProcessingTexture.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
-				StationProcessingRectangle.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+			else if(StationProcessingRectangles.contains(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE))){
+				StationProcessingTextures.remove(StationProcessingRectangles.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+				StationProcessingRectangles.remove(StationProcessingRectangles.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
 			}
 		}
-		else if(currentStation.getClass().equals(new Oven().getClass())) {
+		else if(currentStation.equals(StationType.OVEN)) {
 			if(((Oven) currentStation).getIsProcessing()) {
-				if (((Oven) currentStation).getContents().getIngredientType() == IngredientType.LETTUCE || 1 == 1) {
-					StationProcessingTexture.add(new Texture("OvenProcess.png"));
-					StationProcessingRectangle.add(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE));
-				}
+				//if (Oven Interact Conditional) {
+				//	AddStationProcess("OvenProcess.png", stationX, stationY);
+				//}
 			}
-			else if(StationProcessingRectangle.contains(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE))){
-				StationProcessingTexture.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
-				StationProcessingRectangle.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+			else if(StationProcessingRectangles.contains(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE))){
+				StationProcessingTextures.remove(StationProcessingRectangles.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+				StationProcessingRectangles.remove(StationProcessingRectangles.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
 			}
 		}
-		else if(currentStation.getClass().equals(new CuttingBoard().getClass())) {
+		else if(currentStation.equals(StationType.CUTTING_BOARD)) {
 			if(((CuttingBoard) currentStation).getIsProcessing()) {
 				switch(((CuttingBoard) currentStation).getContents().getIngredientType()) {
+					case LETTUCE:
+					case TOMATO:
+					case ONION:
 					case CHEESE:
-						StationProcessingTexture.add(new Texture("CuttingBoardProcess.png"));
+						AddStationProcess("CuttingBoardProcess.png", stationX, stationY);
 						break;
 				}
-				StationProcessingRectangle.add(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE));
 			}
-			else if(StationProcessingRectangle.contains(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE))){
-				StationProcessingTexture.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
-				StationProcessingRectangle.remove(StationProcessingRectangle.indexOf(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+			else if(StationProcessingRectangles.contains(new Rectangle(stationX * TILE_SIZE, stationY * TILE_SIZE, TILE_SIZE, TILE_SIZE))){
+				RemoveStationProcess(stationX, stationY);
 			}
 		}
 
 		return newInventory;
 	}
+
+	//private boolean
+
+	private void AddStationProcess(String imagePath, int x, int y) {
+		StationProcessingTextures.add(new Texture(imagePath));
+		StationProcessingRectangles.add(new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+	}
+
+	private void RemoveStationProcess(int x, int y) {
+		int index = StationProcessingRectangles.indexOf(new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+		StationProcessingTextures.remove(index);
+		StationProcessingRectangles.remove(index);
+	}
+
+
+
+
+
+
 
 	static public void InventoryFull() {
 
@@ -406,12 +432,84 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		}
 		//if(keycode == Input.Keys.NUM_1) tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
 		//if(keycode == Input.Keys.NUM_2) tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
-		if(keycode == Keys.SPACE) SwitchChefs();
+		if(keycode == Keys.SPACE) {
+			SwitchChefs();
+			UpdateInventoryTextures();
+		}
 		if(keycode == Keys.E) if(VerifyInteract(ChefList.get(SelectedChef))) {
 			ChefList.get(SelectedChef).setInventory(StationInteract(ChefList.get(SelectedChef)));
+			UpdateInventoryTextures();
 		}
 		return false;
 	}
+
+	private void UpdateInventoryTextures() {
+		Inventory items = ChefList.get(SelectedChef).getInventory();
+		this.InventoryTextures = new ArrayList<>();
+		for (int i = 0; i < items.size(); i++) {
+			if(items.get(i).getClass().equals(new Ingredient().getClass())) {
+				switch (((Ingredient) items.get(i)).getIngredientType()) {
+					case LETTUCE: {
+						if(((Ingredient) items.get(i)).isItChopped()){
+							this.InventoryTextures.add(new Texture("Lettuce_Chopped.png"));
+						}
+						else {
+							this.InventoryTextures.add(new Texture("Lettuce.png"));
+						}
+						break;
+					}
+					case TOMATO: {
+						if(((Ingredient) items.get(i)).isItChopped()) {
+							this.InventoryTextures.add(new Texture("Tomato_Chopped.png"));
+						}
+						else {
+							this.InventoryTextures.add(new Texture("Tomato.png"));
+						}
+						break;
+					}
+					case CHEESE: {
+						if(((Ingredient) items.get(i)).isItChopped()) {
+							this.InventoryTextures.add(new Texture("Cheese_Chopped.png"));
+						}
+						else {
+							this.InventoryTextures.add(new Texture("Cheese.png"));
+						}
+						break;
+					}
+					case ONION: {
+						if(((Ingredient) items.get(i)).isItChopped()) {
+							this.InventoryTextures.add(new Texture("Onion_Chopped.png"));
+						}
+						else {
+							this.InventoryTextures.add(new Texture("Onion.png"));
+						}
+						break;
+					}
+					case BEEF_PATTY: {
+						if(((Ingredient) items.get(i)).isItCooked()) {
+							this.InventoryTextures.add(new Texture("Beef_Cooked.png"));
+						}
+						else {
+							this.InventoryTextures.add(new Texture("Beef.png"));
+						}
+						break;
+					}
+					case BUNS: {
+						this.InventoryTextures.add(new Texture("Buns.png"));
+						break;
+					}
+				}
+			}
+			else {
+				this.InventoryTextures.add(new Texture("Plate.png"));
+			}
+
+		}
+
+
+
+	}
+
 
 	@Override
 	public boolean keyTyped(char character) {
