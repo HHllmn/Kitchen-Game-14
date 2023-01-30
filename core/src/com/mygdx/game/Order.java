@@ -4,22 +4,29 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Order {
     ArrayList<Integer> Item = new ArrayList<>();
 
     int x = -20; //Where on the x-axis the orders appear
-    Random rd = new Random();
-    int MaxItems = 1; //MaxItems is the maximum possible number of items which can be in an order.
+    private Random rndNum = new Random();
+    private int MaxItems = 1; //MaxItems is the maximum possible number of items which can be in an order.
     // int ListLen = rd.nextInt(MaxItems); //Length of the order, number of items
-    int ListLen = 1;
-    int[] ItemList = new int[10]; //Array of all possible item IDs (0 is currently a placeholder)
-    int TimeArrived = KitchenGame14.clock.getTotalTime();
+    private int ListLen = 1;
+    private int[] ItemList = new int[10]; //Array of all possible item IDs (0 is currently a placeholder)
+    public int TimeArrived = KitchenGame14.clock.getTotalTime();
     String OrderBackgroundPath = "OrderImage.png";
     Texture texOrderBackground = new Texture(OrderBackgroundPath);
-    String OrderForegroundPath = "Cheese.png";
+    private Map<Plate.MealType, String> map = new HashMap<Plate.MealType, String>();
+
+
+    String OrderForegroundPath = "Hamburger.png";
     Texture texOrderForeground = new Texture(OrderForegroundPath);
+
+
     Texture tex;
     int OrderScreenWidth = 130;
     int OrderScreenHeight = 100 * ListLen;
@@ -27,14 +34,19 @@ public class Order {
     {
         //Creates a list of length ListLen (which is a random int), containing random numbers
         for (int i = 0; i < ListLen; i++) {
-            Item.add(ItemList[rd.nextInt(ItemList.length)]);
+            Item.add(ItemList[rndNum.nextInt(ItemList.length)]);
         }
         if (ListLen < 1) OrderScreenHeight = 100;
         tex = combineTextures(texOrderBackground,texOrderForeground);
 
     }
     public Order(){
+        InitialiseOrder();
+    }
 
+    private void InitialiseOrder() {
+        map.put(Plate.MealType.HAMBURGER, "Hamburger.png");
+        map.put(Plate.MealType.SALAD, "Salad.png");
     }
 
     public boolean compareTo(int ID){
