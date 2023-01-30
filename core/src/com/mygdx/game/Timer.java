@@ -50,4 +50,8 @@ public class Timer {
     public int getTotalTime(){
         return (minutesElapsed * 60) + secondsElapsed;
     }
+
+    public int getMilliElapsed(){return (minutesElapsed*360) + (secondsElapsed*60)+milliElapsed;}
+
+    public int getTimeSince(int Time){return this.getTotalTime() - Time;}
 }

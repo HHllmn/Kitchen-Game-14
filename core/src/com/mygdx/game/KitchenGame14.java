@@ -19,8 +19,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.Input.*;
 import com.mygdx.game.Chef.Facing;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import com.mygdx.game.Ingredient.IngredientType;
 
+import java.awt.*;
 import java.util.ArrayList;
 //endregion Imports
 
@@ -43,12 +45,10 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	Texture borderTex;
 
-
 	private ArrayList<Texture> StationProcessingTextures = new ArrayList<>();
 	private ArrayList<Rectangle> StationProcessingRectangles = new ArrayList<>();
 	private ArrayList<Texture> InventoryTextures = new ArrayList<>();
 
-	public Rectangle OrdersList; //Order list on the side of the screen
 	public Rectangle MenuItem1; //Menu Item Number 1
 	public Rectangle Border; //Border Item
 
@@ -90,32 +90,39 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	Texture img;
 	private TiledMap tiledMap;
+
+	MyInputProcessor processor = new MyInputProcessor();
+
 	private TiledMapRenderer tiledMapRenderer;
 	public Tile[][] tileGrid = new Tile[GRID_WIDTH][GRID_HEIGHT];
 
 
 	//Creates the timer;
-	public Timer clock = new Timer(true);
+	public static Timer clock = new Timer(true);
 	BitmapFont font;
-
+	int LastTime = -1;
 	public ArrayList<Order> OrderList = new ArrayList<Order>();
+	Point OrderPoint;
+	int lastKeyPress = -1;
+	int lastSpacePress = -1;
 	//endregion Properties
 
 	//region Main Methods
 	@Override
-	public void create () {
-
+	public void create() {
+		Gdx.input.setInputProcessor(processor);
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 
 		img = new Texture("PiazzaPanicTileSet.png");
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false,w,h);
-		camera.translate(-150,-25);
+		camera.setToOrtho(false, w, h);
+		camera.translate(-150, -25);
 		camera.update();
 		tiledMap = new TmxMapLoader().load("PiazzaPanicLevel.tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-		Gdx.input.setInputProcessor(this);
+		Gdx.input.setInputProcessor(processor);
+		//Gdx.input.setInputProcessor(this);
 
 		batch = new SpriteBatch();
 
@@ -136,6 +143,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		//Create List of Orders rectangle
 		MenuItem1 = new Rectangle(0, 540 - 100, 100, 50);
 		Border = new Rectangle(0, 540 - 110, 100, 50);
+		OrderPoint = new Point((int) (TopBorder.x - 150), 475);
 
 	}
 
@@ -144,13 +152,12 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	//}
 
 
-
 	@Override
-	public void render () {
+	public void render() {
 		clock.tick();
+		movement();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
-
 
 		ScreenUtils.clear(1, 0, 0, 1);
 
@@ -161,13 +168,16 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
 
+		if (clock.getTotalTime() % 15 == 0 && clock.getTotalTime() != LastTime) {
+			OrderList.add(new Order());
+			LastTime = clock.getTotalTime();
+		}
 
-
-		batch.begin();
-		font = new BitmapFont();
-		CharSequence str = clock.getTimeElapsed();
-		font.draw(batch, str,-150 , 500);
-		batch.end();
+		//batch.begin();
+		//font = new BitmapFont();
+		//CharSequence str = clock.getTimeElapsed();
+		//font.draw(batch, str,-150 , 500);
+		//batch.end();
 
 		batch.begin();
 
@@ -185,21 +195,40 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		for (int i = 0; i < InventoryTextures.size(); i++) {
 			batch.draw(InventoryTextures.get(i), RightBorder.x + 2, (TILE_MAP_HEIGHT - 70) - (i * 75), TILE_SIZE / 2, TILE_SIZE / 2);
 		}
-		//CREATING THE ORDER LIST BY ITEMS INDIVIDUALLY
-		//for (int i = 0; i < OrderList.size(); i++) {
-		//	batch.draw(orderlistTex, TopBorder.x - orderlistTex.getWidth(), TopBorder.y*i);
-		//}
+
+		//DRAWING THE ORDER LIST BY ITEMS INDIVIDUALLY
+		for (int i = 0; i < OrderList.size(); i++) {
+			batch.draw(OrderList.get(i).tex, OrderPoint.x, OrderPoint.y - ((i + 1) * 100), OrderList.get(i).getWidth(), OrderList.get(i).getHeight());
+		}
 
 
 		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
 		//batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
 		//batch.draw(borderTex, Border.x, Border.y);
 		batch.end();
+		//Rendering the timers
+		batch.begin();
+		//First we write the timer as text for the elapsed game time
+		font = new BitmapFont();
+		CharSequence str = clock.getTimeElapsed();
+		font.draw(batch, str, -150, 500);
+		//Then we render a timer bar for each order, larger the longer the order has been waiting
+		for (int i = 0; i < OrderList.size(); i++) {
+			batch.draw(borderTex, OrderPoint.x, OrderPoint.y - ((i) * 100) - 10, 7 * clock.getTimeSince(OrderList.get(i).TimeArrived), 10);
+		}
+		batch.end();
+		//Then we check if the order has reached its "max waiting time", if so the customer leaves, so we remove it
+		for (int i = 0; i < OrderList.size(); i++) {
+			if (clock.getTimeSince(OrderList.get(i).TimeArrived) == 20) {
+				OrderList.remove(i);
+			}
+		}
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 	}
+
 	@Override
-	public void dispose () {
+	public void dispose() {
 
 		batch.dispose();
 		//stage.dispose();
@@ -215,7 +244,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		for (int n = 0; n < WorkstationsGrid.length; n++) {
 			for (int m = 0; m < WorkstationsGrid[0].length; m++) {
 				if (WorkstationsGrid[n][m] > 0) {
-					switch(WorkstationsGrid[n][m]) {
+					switch (WorkstationsGrid[n][m]) {
 						case 1:// is an empty counter
 							tileGrid[n][m] = new Tile(n, m, true);
 							break;
@@ -267,30 +296,24 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	}
 
 	private void SetTileAdjacency(int n, int m) {
-		if(n > 0) {
-			if(WorkstationsGrid[n][m] > 0) tileGrid[n-1][m].setRightOfMe(true);
-			if(WorkstationsGrid[n-1][m] > 0) tileGrid[n][m].setLeftOfMe(true);
+		if (n > 0) {
+			if (WorkstationsGrid[n][m] > 0) tileGrid[n - 1][m].setRightOfMe(true);
+			if (WorkstationsGrid[n - 1][m] > 0) tileGrid[n][m].setLeftOfMe(true);
+
 		}
-		if(m > 0) {
-			if(WorkstationsGrid[n][m] > 0) tileGrid[n][m-1].setAboveMe(true);
-			if(WorkstationsGrid[n][m-1] > 0) tileGrid[n][m].setUnderMe(true);
+		if (m > 0) {
+			if (WorkstationsGrid[n][m] > 0) tileGrid[n][m - 1].setAboveMe(true);
+			if (WorkstationsGrid[n][m - 1] > 0) tileGrid[n][m].setUnderMe(true);
 		}
 	}
 	//endregion Initialisation Methods
 
 	//region Other Methods
-
-	//displays cooking asset
-	private void isCooking() {
-
-
-
-	}
-
-	public void SwitchChefs(){
+	public boolean SwitchChefs() {
 		//Subroutine to switch between chef;
 		SelectedChef++;
-		if (SelectedChef > ChefList.size()-1) SelectedChef = 0;
+		if (SelectedChef > ChefList.size() - 1) SelectedChef = 0;
+		return false;
 	}
 
 	private boolean collisionCheck(Chef PlayerChef) {
@@ -400,49 +423,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		//Success!
 	}
 
-
-
-	//endregion Methods
-
-	//region Events
-	@Override
-	public boolean keyDown(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		int random;
-
-		if(keycode == Input.Keys.LEFT) {
-			ChefList.get(SelectedChef).setDirection(Facing.LEFT);
-			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-		}
-		if(keycode == Input.Keys.RIGHT) {
-			ChefList.get(SelectedChef).setDirection(Facing.RIGHT);
-			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-		}
-		if(keycode == Input.Keys.UP) {
-			ChefList.get(SelectedChef).setDirection(Facing.UP);
-			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-		}
-		if(keycode == Input.Keys.DOWN) {
-			ChefList.get(SelectedChef).setDirection(Facing.DOWN);
-			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-		}
-		//if(keycode == Input.Keys.NUM_1) tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
-		//if(keycode == Input.Keys.NUM_2) tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
-		if(keycode == Keys.SPACE) {
-			SwitchChefs();
-			UpdateInventoryTextures();
-		}
-		if(keycode == Keys.E) if(VerifyInteract(ChefList.get(SelectedChef))) {
-			ChefList.get(SelectedChef).setInventory(StationInteract(ChefList.get(SelectedChef)));
-			UpdateInventoryTextures();
-		}
-		return false;
-	}
-
 	private void UpdateInventoryTextures() {
 		Inventory items = ChefList.get(SelectedChef).getInventory();
 		this.InventoryTextures = new ArrayList<>();
@@ -510,6 +490,82 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	}
 
+	public boolean movement(){
+		if (lastKeyPress + 10 < clock.getMilliElapsed()) {
+			if (processor.leftPressed) {
+				ChefList.get(SelectedChef).setDirection(Facing.LEFT);
+				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+				lastKeyPress = clock.getMilliElapsed();
+			}
+			if (processor.rightPressed) {
+				ChefList.get(SelectedChef).setDirection(Facing.RIGHT);
+				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+				lastKeyPress = clock.getMilliElapsed();
+			}
+			if (processor.upPressed) {
+				ChefList.get(SelectedChef).setDirection(Facing.UP);
+				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+				lastKeyPress = clock.getMilliElapsed();
+			}
+			if (processor.downPressed) {
+				ChefList.get(SelectedChef).setDirection(Facing.DOWN);
+				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+				lastKeyPress = clock.getMilliElapsed();
+			}
+		}
+		if(processor.spacePressed && lastSpacePress + 8 < clock.getMilliElapsed())
+		{
+			SwitchChefs();
+			lastSpacePress = clock.getMilliElapsed();
+		}
+		//if(processor.ePressed && VerifyInteract(ChefList.get(SelectedChef))){
+		//		ChefList.get(SelectedChef).setInventory(StationInteract(ChefList.get(SelectedChef)));
+		//	}
+		//}
+		return false;
+	}
+
+
+	//endregion Methods
+
+	//region Events
+	@Override
+	public boolean keyDown(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		int random;
+
+		if(keycode == Input.Keys.LEFT) {
+			ChefList.get(SelectedChef).setDirection(Facing.LEFT);
+			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+		}
+		if(keycode == Input.Keys.RIGHT) {
+			ChefList.get(SelectedChef).setDirection(Facing.RIGHT);
+			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+		}
+		if(keycode == Input.Keys.UP) {
+			ChefList.get(SelectedChef).setDirection(Facing.UP);
+			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+		}
+		if(keycode == Input.Keys.DOWN) {
+			ChefList.get(SelectedChef).setDirection(Facing.DOWN);
+			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+		}
+		//if(keycode == Input.Keys.NUM_1) tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
+		//if(keycode == Input.Keys.NUM_2) tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
+		if(keycode == Keys.SPACE) {
+			SwitchChefs();
+			UpdateInventoryTextures();
+		}
+		if(keycode == Keys.E) if(VerifyInteract(ChefList.get(SelectedChef))) {
+			ChefList.get(SelectedChef).setInventory(StationInteract(ChefList.get(SelectedChef)));
+			UpdateInventoryTextures();
+		}
+		return false;
+	}
 
 	@Override
 	public boolean keyTyped(char character) {
