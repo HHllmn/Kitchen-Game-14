@@ -317,7 +317,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	//region Initialisation Methods
 
 
-	private void InitialiseTileGrid() {
+	private void InitialiseTileGrid(){
 
 		for (int n = 0; n < WorkstationsGrid.length; n++) {
 			for (int m = 0; m < WorkstationsGrid[0].length; m++) {
