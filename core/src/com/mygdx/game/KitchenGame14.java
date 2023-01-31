@@ -166,10 +166,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	}
 
-	//public void resize (int width, int height) {
-	//	stage.getViewport().update(width, height, true);
-	//}
-
 
 	@Override
 	public void render() {
@@ -207,14 +203,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			tiledMapRenderer.setView(camera);
 			tiledMapRenderer.render();
 
-
-
-
-			//batch.begin();
-			//font = new BitmapFont();
-			//CharSequence str = clock.getTimeElapsed();
-			//font.draw(batch, str,-150 , 500);
-			//batch.end();
 
 			batch.begin();
 

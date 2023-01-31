@@ -70,13 +70,6 @@ public class Chef {
         }
     }
 
-    //public void translateChef(int x, int y){ //Description: move the chef using pixel distance relative to the camera
-    //    this.cameraPosition.x += x;
-    //    this.tilePosition.x += (x / 70);
-    //    this.cameraPosition.y += y;
-    //    this.tilePosition.y += (y / 70);
-    //}
-
 
     //This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
     // less than a second but incrementally move the chef over until it's in the new space, like a sliding motion.

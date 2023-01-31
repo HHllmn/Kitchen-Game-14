@@ -52,10 +52,6 @@ public class PlateStack implements Station{
         return items;
     }
 
-    private boolean containsIngredient(Ingredient ingredient, Ingredient.IngredientType type) {
-        return (ingredient.getIngredientType() == type && ingredient.isItPrepared());
-    }
-
 
     @Override
     public boolean equals(StationType type) {
