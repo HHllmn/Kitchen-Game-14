@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static com.mygdx.game.Plate.MealType.randomMeal;
+
 public class Order {
     ArrayList<Integer> Item = new ArrayList<>();
 
@@ -15,21 +17,28 @@ public class Order {
     private Random rndNum = new Random();
     private int MaxItems = 1; //MaxItems is the maximum possible number of items which can be in an order.
     // int ListLen = rd.nextInt(MaxItems); //Length of the order, number of items
-    private int ListLen = 1;
+    private static int ListLen = 1;
+    private boolean isCompleted;
+    private boolean noTimer;
     private int[] ItemList = new int[10]; //Array of all possible item IDs (0 is currently a placeholder)
-    public int TimeArrived = KitchenGame14.clock.getTotalTime();
+    private int timeWaited = 0;
     String OrderBackgroundPath = "OrderImage.png";
+    private static Texture successTexture = new Texture("Success.png");
+    private static Texture failTexture = new Texture("Fail.png");
     Texture texOrderBackground = new Texture(OrderBackgroundPath);
-    private Map<Plate.MealType, String> map = new HashMap<Plate.MealType, String>();
+    private Map<Plate.MealType, String> meals = new HashMap<Plate.MealType, String>();
+    private Plate.MealType expectedMeal;
 
 
-    String OrderForegroundPath = "Hamburger.png";
-    Texture texOrderForeground = new Texture(OrderForegroundPath);
+    String OrderForegroundPath;
+    Texture texOrderForeground;
 
 
-    Texture tex;
-    int OrderScreenWidth = 130;
-    int OrderScreenHeight = 100 * ListLen;
+    Texture orderTexture;
+    static int OrderScreenWidth = 130;
+    static int OrderScreenHeight = 100 * ListLen;
+
+
 
     {
         //Creates a list of length ListLen (which is a random int), containing random numbers
@@ -37,16 +46,16 @@ public class Order {
             Item.add(ItemList[rndNum.nextInt(ItemList.length)]);
         }
         if (ListLen < 1) OrderScreenHeight = 100;
-        tex = combineTextures(texOrderBackground,texOrderForeground);
+        IntialiseMeals();
+        expectedMeal = randomMeal();
+        OrderForegroundPath = meals.get(expectedMeal);
+        texOrderForeground = new Texture(OrderForegroundPath);
+        orderTexture = combineTextures(texOrderBackground,texOrderForeground);
+        isCompleted = false;
 
     }
-    public Order(){
-        InitialiseOrder();
-    }
-
-    private void InitialiseOrder() {
-        map.put(Plate.MealType.HAMBURGER, "Hamburger.png");
-        map.put(Plate.MealType.SALAD, "Salad.png");
+    public Order(boolean noTimer) {
+        this.noTimer = noTimer;
     }
 
     public boolean compareTo(int ID){
@@ -57,6 +66,11 @@ public class Order {
             }
         }
         return false;
+    }
+
+    private void IntialiseMeals() {
+        meals.put(Plate.MealType.HAMBURGER, "Hamburger_Cheese.png");
+        meals.put(Plate.MealType.SALAD, "Salad.png");
     }
 
     //compareTo searches through an array of item IDs from the ChefInventory.
@@ -86,6 +100,13 @@ public class Order {
         return itemfound;
     }
 
+    public boolean getIsCompleted() {
+        return this.isCompleted;
+    }
+    public void setIsCompleted(boolean completed) {
+        this.isCompleted = completed;
+    }
+
     public int getHeight(){return OrderScreenHeight;}
     public int getWidth(){return OrderScreenWidth;}
 
@@ -98,4 +119,35 @@ public class Order {
         Texture texOut = new Texture(pixmapA);
         return texOut;
     }
+
+    public void displayRep(Plate.MealType deliveredMeal) {
+
+        if(deliveredMeal == expectedMeal) {
+            texOrderForeground = successTexture;
+        }
+        else {
+            texOrderForeground = failTexture;
+        }
+        orderTexture = combineTextures(texOrderBackground,texOrderForeground);
+        isCompleted = true;
+    }
+
+    public Texture getTexture() {
+        return orderTexture;
+    }
+
+    public int getTimeWaited() {
+        return this.timeWaited;
+    }
+
+    public void incrementTimeWaited() {
+        if(!noTimer || isCompleted) {
+            timeWaited++;
+        }
+    }
+
+
+
+
+
 }

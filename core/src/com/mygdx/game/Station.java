@@ -14,6 +14,8 @@ enum StationType {
 public interface Station {
 
     public Inventory Interact(Inventory inventory); //interface method to handle
+    public int getProgress();
+    public void incrementProgress();
     StationType stationType = null;
     public boolean equals(StationType type);
 

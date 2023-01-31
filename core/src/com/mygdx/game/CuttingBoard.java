@@ -11,6 +11,7 @@ public class CuttingBoard implements Station {
     static private StationType stationType;
     private boolean isProcessing;
     private Ingredient contents;
+    private int progress;
 
     public CuttingBoard() {
         this.stationType = StationType.CUTTING_BOARD;
@@ -45,8 +46,8 @@ public class CuttingBoard implements Station {
                 }
             }
         }
-        else if(items.isNotfull()) {
-            if(this.isProcessing) {
+        else if(items.isNotFull()) {
+            if(this.isProcessing && progress == 5) {
                 items = setResults(items);
             }
         }
@@ -61,6 +62,7 @@ public class CuttingBoard implements Station {
         items.add(contents);
         this.contents = null;
         isProcessing = false;
+        progress = 0;
         return items;
     }
 
@@ -74,6 +76,10 @@ public class CuttingBoard implements Station {
     public boolean equals(StationType type) {
         return this.stationType == type;
     }
-
-
+    public int getProgress() {
+        return progress;
+    }
+    public void incrementProgress() {
+        if(progress < 5) progress++;
+    }
 }

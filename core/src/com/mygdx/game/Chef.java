@@ -41,7 +41,7 @@ public class Chef {
 
     String texturePath;
 
-    private ArrayList<Texture> tex;
+    private ArrayList<Texture> chefTextures;
     private SpriteBatch batch;
     private Facing direction;
     private Inventory inventory = new Inventory();
@@ -59,12 +59,19 @@ public class Chef {
         this.height = 70;
         this.direction = Facing.UP;
         //this.texturePath = "ChefUp.png";
-        this.tex = new ArrayList<Texture>();
-        this.tex.add(new Texture("ChefUp.png"));
-        this.tex.add(new Texture("ChefRight.png"));
-        this.tex.add(new Texture("ChefDown.png"));
-        this.tex.add(new Texture("ChefLeft.png"));
-
+        this.chefTextures = new ArrayList<Texture>();
+        if(ChefNumber == 1) {
+            this.chefTextures.add(new Texture("ChefAUp.png"));
+            this.chefTextures.add(new Texture("ChefARight.png"));
+            this.chefTextures.add(new Texture("ChefADown.png"));
+            this.chefTextures.add(new Texture("ChefALeft.png"));
+        }
+        else {
+            this.chefTextures.add(new Texture("ChefBUp.png"));
+            this.chefTextures.add(new Texture("ChefBRight.png"));
+            this.chefTextures.add(new Texture("ChefBDown.png"));
+            this.chefTextures.add(new Texture("ChefBLeft.png"));
+        }
     }
     public Chef(int xaxis, int yaxis, int w, int h){
         batch = new SpriteBatch();
@@ -179,7 +186,7 @@ public class Chef {
         return getTexture(this.direction);
     }
     public Texture getTexture(Facing direction){
-        return tex.get(direction.getValue());
+        return chefTextures.get(direction.getValue());
     }
 
     public Facing getDirection(){

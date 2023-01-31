@@ -10,10 +10,12 @@ public class Grill implements Station {
     private boolean isProcessing;
     private StationType stationType;
     private Ingredient contents;
+    private int progress;
 
     public Grill() {
         this.stationType = StationType.GRILL;
         this.isProcessing = false;
+        this.progress = 0;
         this.contents = null;
     }
 
@@ -41,8 +43,8 @@ public class Grill implements Station {
                 }
             }
         }
-        else if(items.isNotfull()) {
-            if (this.isProcessing) {
+        else if(items.isNotFull()) {
+            if (this.isProcessing && progress == 5) {
                 items = setResults(items);
             }
         }
@@ -57,22 +59,24 @@ public class Grill implements Station {
         items.add(contents);
         this.contents = null;
         isProcessing = false;
+        progress = 0;
         return items;
     }
 
     public boolean getIsProcessing() {
         return this.isProcessing;
     }
-
-
     public Ingredient getContents() {
         return this.contents;
     }
-
-
     @Override
     public boolean equals(StationType type) {
         return this.stationType == type;
     }
-
+    public int getProgress() {
+        return progress;
+    }
+    public void incrementProgress() {
+        if(progress < 5) progress++;
+    }
 }

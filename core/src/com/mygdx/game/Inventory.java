@@ -75,7 +75,7 @@ public class Inventory {
         return !inventoryEmpty;
     }
 
-    public boolean isNotfull(){
+    public boolean isNotFull(){
         return !inventoryFull;
     }
 

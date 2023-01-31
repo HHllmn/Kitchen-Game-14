@@ -31,4 +31,9 @@ public class Bin implements Station {
         return this.stationType == type;
     }
 
+    public int getProgress() {
+        return 0;
+    }
+    public void incrementProgress() { }
+
 }
