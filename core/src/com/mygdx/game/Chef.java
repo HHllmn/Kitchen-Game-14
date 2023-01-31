@@ -44,7 +44,7 @@ public class Chef {
 
     //Creates a chef with ChefNumber/ID as 0, then increments (so next ChefNumber is 1)
     static int ChefNumber = 0;
-    static {
+    {
         ChefNumber += 1;
     }
     //0 is up, 1 is right, 2 is down, 3 is left

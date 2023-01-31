@@ -143,7 +143,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		borderTex = new Texture("Border.png");
 		//chef Inventory
 		chefImgs.add(0, new Texture("ChefADown.png"));
-		chefImgs.add(1, new Texture("ChefBDown.png"));//add new chefs here to display a new one
+		chefImgs.add(1, new Texture("ChefBDown.png"));//add new chefs here to display a new one for the inventory
 
 		Progresses.add(new Texture("Progress.png"));
 		Progresses.add(new Texture("Progress_20.png"));
@@ -188,7 +188,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 			camera.update();
 			batch.begin();
-			batch.draw(WinTex, 0, 0);
+			batch.draw(WinTex, -150, -25);
 			batch.end();
 			camera.update();
 		}
