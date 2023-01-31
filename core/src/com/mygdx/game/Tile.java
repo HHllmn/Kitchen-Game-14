@@ -5,7 +5,7 @@ public class Tile {
 
     //region Properties
     private Station tileStation;
-    private Point position;
+    private final Point position;
     private boolean ContainsCounter;
 
     private boolean somethingAboveMe;
@@ -45,9 +45,7 @@ public class Tile {
 
 
     public Boolean ContainsStation() {
-        boolean doesContainStation = false;
-        if (tileStation != null) doesContainStation = true;
-        return doesContainStation;
+        return tileStation != null;
     }
 
     public Station getTileStation(){
@@ -103,9 +101,7 @@ public class Tile {
     }
 
     public boolean CanIInteract(Chef.Facing direction) {
-        boolean iCanInteract = false;
-        if (AnythingThere(direction)) iCanInteract = true;
-        return iCanInteract;
+        return AnythingThere(direction);
     }
 
     //currently unused.

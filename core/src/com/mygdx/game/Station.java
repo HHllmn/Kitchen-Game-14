@@ -7,15 +7,14 @@ enum StationType {
     DELIVERY_POINT,
     OVEN,
     PLATE_STACK,
-    PANTRY;
+    PANTRY
 }
 public interface Station {
 
-    public Inventory Interact(Inventory inventory); //interface method to handle
-    public int getProgress();
-    public void incrementProgress();
-    StationType stationType = null;
-    public boolean equals(StationType type);
+    Inventory Interact(Inventory inventory); //interface method to handle
+    int getProgress();
+    void incrementProgress();
+    boolean equals(StationType type);
 
 }
 

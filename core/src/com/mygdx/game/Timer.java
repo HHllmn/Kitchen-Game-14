@@ -1,9 +1,5 @@
 package com.mygdx.game;
 
-import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
-
-import java.sql.Time;
-
 public class Timer {
 
     int milliElapsed = 0;
@@ -15,7 +11,7 @@ public class Timer {
         running = run;
     }
     public void tick(){
-        if (running == true){
+        if (running){
             milliElapsed++;
         }
         if (milliElapsed == 60){

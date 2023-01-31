@@ -10,7 +10,7 @@ public class Plate implements Item {
         //PIZZA(2),
         //JACKET_POTATO(3);
         private final int value;
-        private static Map map = new HashMap<>();
+        private static final Map map = new HashMap<>();
         private MealType(int value) {
             this.value = value;
         }
