@@ -18,7 +18,7 @@ public class Order {
     private int ListLen = 1;
     private int[] ItemList = new int[10]; //Array of all possible item IDs (0 is currently a placeholder)
     public int TimeArrived = KitchenGame14.clock.getTotalTime();
-    String OrderBackgroundPath = "OrderImage.png";
+    String OrderBackgroundPath = "OrderImage2.png";
     Texture texOrderBackground = new Texture(OrderBackgroundPath);
     private Map<Plate.MealType, String> map = new HashMap<Plate.MealType, String>();
 

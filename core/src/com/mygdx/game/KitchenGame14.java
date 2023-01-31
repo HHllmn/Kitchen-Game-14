@@ -21,9 +21,11 @@ import com.badlogic.gdx.Input.*;
 import com.mygdx.game.Chef.Facing;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import com.mygdx.game.Ingredient.IngredientType;
+import jdk.javadoc.internal.tool.Start;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
 //endregion Imports
 
 public class KitchenGame14 extends ApplicationAdapter implements InputProcessor {
@@ -105,7 +107,20 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	Point OrderPoint;
 	int lastKeyPress = -1;
 	int lastSpacePress = -1;
+
+	enum MenuType{
+		START,
+		GAME,
+		PAUSE;
+	}
+
+	MenuType Screen = MenuType.START;
+	int TotalOrderCount = 0;
+	int LevelOrders = 5; //Set LevelOrders to -1 to make orders infinitely arrive.
 	//endregion Properties
+	Texture MenuTex;
+	Texture PauseMenuTex;
+	Texture WinTex;
 
 	//region Main Methods
 	@Override
@@ -113,7 +128,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		Gdx.input.setInputProcessor(processor);
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-
+		MenuTex = new Texture("PiazzaPanicMenu.png");
+		PauseMenuTex = new Texture("PauseMenu.png");
+		WinTex = new Texture("WinEndscreen.png");
 		img = new Texture("PiazzaPanicTileSet.png");
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, w, h);
@@ -121,8 +138,8 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		camera.update();
 		tiledMap = new TmxMapLoader().load("PiazzaPanicLevel.tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-		Gdx.input.setInputProcessor(processor);
-		//Gdx.input.setInputProcessor(this);
+		//Gdx.input.setInputProcessor(processor);
+		Gdx.input.setInputProcessor(this);
 
 		batch = new SpriteBatch();
 
@@ -154,77 +171,115 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	@Override
 	public void render() {
-		clock.tick();
-		movement();
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
-		camera.update();
+		if(Screen == MenuType.START){
+			ScreenUtils.clear(0, 0, 0, 0);
 
-		ScreenUtils.clear(1, 0, 0, 1);
-
-		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		camera.update();
-		tiledMapRenderer.setView(camera);
-		tiledMapRenderer.render();
-
-		if (clock.getTotalTime() % 15 == 0 && clock.getTotalTime() != LastTime) {
-			OrderList.add(new Order());
-			LastTime = clock.getTotalTime();
+			camera.update();
+			batch.begin();
+			batch.draw(MenuTex, 0, 0);
+			batch.end();
+			camera.update();
 		}
+		else if (OrderList.size() == 0 && TotalOrderCount == LevelOrders){
+			//Level completed, Success!!!
+			ScreenUtils.clear(0, 0, 0, 0);
 
-		//batch.begin();
-		//font = new BitmapFont();
-		//CharSequence str = clock.getTimeElapsed();
-		//font.draw(batch, str,-150 , 500);
-		//batch.end();
-
-		batch.begin();
-
-		batch.draw(borderTex, TopBorder.x, TopBorder.y, TopBorder.getWidth(), TopBorder.getHeight());
-		batch.draw(borderTex, BottomBorder.x, BottomBorder.y, BottomBorder.getWidth(), BottomBorder.getHeight());
-		batch.draw(borderTex, RightBorder.x, RightBorder.y, RightBorder.getWidth(), RightBorder.getHeight());
-		batch.draw(borderTex, LeftBorder.x, LeftBorder.y, LeftBorder.getWidth(), LeftBorder.getHeight());
-
-		for (int i = 0; i < ChefList.size(); i++) {
-			batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).getCameraX(), ChefList.get(i).getCameraY(), ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
+			camera.update();
+			batch.begin();
+			batch.draw(WinTex, 0, 0);
+			batch.end();
+			camera.update();
 		}
-		for (int i = 0; i < StationProcessingTextures.size(); i++) {
-			batch.draw(StationProcessingTextures.get(i), StationProcessingRectangles.get(i).x, StationProcessingRectangles.get(i).y, StationProcessingRectangles.get(i).getWidth(), StationProcessingRectangles.get(i).getHeight());
-		}
-		for (int i = 0; i < InventoryTextures.size(); i++) {
-			batch.draw(InventoryTextures.get(i), RightBorder.x + 2, (TILE_MAP_HEIGHT - 70) - (i * 75), TILE_SIZE / 2, TILE_SIZE / 2);
-		}
+		else if (Screen == MenuType.GAME){
+			clock.tick();
+			movement();
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
+			camera.update();
 
-		//DRAWING THE ORDER LIST BY ITEMS INDIVIDUALLY
-		for (int i = 0; i < OrderList.size(); i++) {
-			batch.draw(OrderList.get(i).tex, OrderPoint.x, OrderPoint.y - ((i + 1) * 100), OrderList.get(i).getWidth(), OrderList.get(i).getHeight());
-		}
+			ScreenUtils.clear(1, 0, 0, 1);
 
+			Gdx.gl.glClearColor(0, 0, 0, 0);
+			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			camera.update();
+			tiledMapRenderer.setView(camera);
+			tiledMapRenderer.render();
 
-		//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
-		//batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
-		//batch.draw(borderTex, Border.x, Border.y);
-		batch.end();
-		//Rendering the timers
-		batch.begin();
-		//First we write the timer as text for the elapsed game time
-		font = new BitmapFont();
-		CharSequence str = clock.getTimeElapsed();
-		font.draw(batch, str, -150, 500);
-		//Then we render a timer bar for each order, larger the longer the order has been waiting
-		for (int i = 0; i < OrderList.size(); i++) {
-			batch.draw(borderTex, OrderPoint.x, OrderPoint.y - ((i) * 100) - 10, 7 * clock.getTimeSince(OrderList.get(i).TimeArrived), 10);
-		}
-		batch.end();
-		//Then we check if the order has reached its "max waiting time", if so the customer leaves, so we remove it
-		for (int i = 0; i < OrderList.size(); i++) {
-			if (clock.getTimeSince(OrderList.get(i).TimeArrived) == 20) {
-				OrderList.remove(i);
+			if (clock.getTotalTime() % 15 == 0 && clock.getTotalTime() != LastTime) {
+				if (TotalOrderCount != LevelOrders){
+					OrderList.add(new Order());
+					TotalOrderCount++;
+				}
+				LastTime = clock.getTotalTime();
 			}
+
+			//batch.begin();
+			//font = new BitmapFont();
+			//CharSequence str = clock.getTimeElapsed();
+			//font.draw(batch, str,-150 , 500);
+			//batch.end();
+
+			batch.begin();
+
+			batch.draw(borderTex, TopBorder.x, TopBorder.y, TopBorder.getWidth(), TopBorder.getHeight());
+			batch.draw(borderTex, BottomBorder.x, BottomBorder.y, BottomBorder.getWidth(), BottomBorder.getHeight());
+			batch.draw(borderTex, RightBorder.x, RightBorder.y, RightBorder.getWidth(), RightBorder.getHeight());
+			batch.draw(borderTex, LeftBorder.x, LeftBorder.y, LeftBorder.getWidth(), LeftBorder.getHeight());
+
+			for (int i = 0; i < ChefList.size(); i++) {
+				batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).getCameraX(), ChefList.get(i).getCameraY(), ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
+			}
+			for (int i = 0; i < StationProcessingTextures.size(); i++) {
+				batch.draw(StationProcessingTextures.get(i), StationProcessingRectangles.get(i).x, StationProcessingRectangles.get(i).y, StationProcessingRectangles.get(i).getWidth(), StationProcessingRectangles.get(i).getHeight());
+			}
+			for (int i = 0; i < InventoryTextures.size(); i++) {
+				batch.draw(InventoryTextures.get(i), RightBorder.x + 2, (TILE_MAP_HEIGHT - 70) - (i * 75), TILE_SIZE / 2, TILE_SIZE / 2);
+			}
+
+			//DRAWING THE ORDER LIST BY ITEMS INDIVIDUALLY
+			for (int i = 0; i < OrderList.size(); i++) {
+				batch.draw(OrderList.get(i).tex, OrderPoint.x, OrderPoint.y - ((i + 1) * 100), OrderList.get(i).getWidth(), OrderList.get(i).getHeight());
+			}
+
+
+			//batch.draw(ordersListTex, OrdersList.x, OrdersList.y);
+			//batch.draw(menuItem1Tex, MenuItem1.x, MenuItem1.y);
+			//batch.draw(borderTex, Border.x, Border.y);
+			batch.end();
+			//Rendering the timers
+			batch.begin();
+			//First we write the timer as text for the elapsed game time
+			font = new BitmapFont();
+			CharSequence str = clock.getTimeElapsed();
+			font.getData().setScale(2.0f);
+			font.draw(batch, str, -130, 507);
+			//Then we render a timer bar for each order, larger the longer the order has been waiting
+			boolean OrderTimeout = false; //SET OrderTimeout to be true for orders to delete after set time.
+			int OrderDeleteAfter = 20; //SET time for order to delete after (seconds)
+			if (OrderTimeout == true) {
+				for (int i = 0; i < OrderList.size(); i++) {
+					batch.draw(borderTex, OrderPoint.x, OrderPoint.y - ((i) * 100) - 10, 7 * clock.getTimeSince(OrderList.get(i).TimeArrived), 10);
+				}
+				//Then we check if the order has reached its "max waiting time", if so the customer leaves, so we remove it
+				for (int i = 0; i < OrderList.size(); i++) {
+					if (clock.getTimeSince(OrderList.get(i).TimeArrived) == OrderDeleteAfter) {
+						OrderList.remove(i);
+					}
+				}
+			}
+			batch.end();
+			camera.update();
+			batch.setProjectionMatrix(camera.combined);
 		}
-		camera.update();
-		batch.setProjectionMatrix(camera.combined);
+		else if (Screen == MenuType.PAUSE){
+			ScreenUtils.clear(0, 0, 0, 0);
+
+			camera.update();
+			batch.begin();
+			batch.draw(PauseMenuTex, -150, -25);
+			batch.end();
+			camera.update();
+		}
 	}
 
 	@Override
@@ -537,32 +592,46 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	@Override
 	public boolean keyUp(int keycode) {
 		int random;
-
-		if(keycode == Input.Keys.LEFT) {
-			ChefList.get(SelectedChef).setDirection(Facing.LEFT);
-			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+		if (Screen == MenuType.GAME) {
+			if (keycode == Input.Keys.LEFT) {
+				ChefList.get(SelectedChef).setDirection(Facing.LEFT);
+				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+			}
+			if (keycode == Input.Keys.RIGHT) {
+				ChefList.get(SelectedChef).setDirection(Facing.RIGHT);
+				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+			}
+			if (keycode == Input.Keys.UP) {
+				ChefList.get(SelectedChef).setDirection(Facing.UP);
+				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+			}
+			if (keycode == Input.Keys.DOWN) {
+				ChefList.get(SelectedChef).setDirection(Facing.DOWN);
+				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+			}
+			//if(keycode == Input.Keys.NUM_1) tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
+			//if(keycode == Input.Keys.NUM_2) tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
+			if (keycode == Keys.SPACE) {
+				SwitchChefs();
+				UpdateInventoryTextures();
+			}
+			if (keycode == Keys.E) if (VerifyInteract(ChefList.get(SelectedChef))) {
+				ChefList.get(SelectedChef).setInventory(StationInteract(ChefList.get(SelectedChef)));
+				UpdateInventoryTextures();
+			}
+			if (keycode == Keys.P){
+				Screen = MenuType.PAUSE;
+			}
 		}
-		if(keycode == Input.Keys.RIGHT) {
-			ChefList.get(SelectedChef).setDirection(Facing.RIGHT);
-			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
+		else if (Screen == MenuType.START) {
+			if (keycode != Keys.ANY_KEY){
+				Screen = MenuType.GAME;
+			}
 		}
-		if(keycode == Input.Keys.UP) {
-			ChefList.get(SelectedChef).setDirection(Facing.UP);
-			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-		}
-		if(keycode == Input.Keys.DOWN) {
-			ChefList.get(SelectedChef).setDirection(Facing.DOWN);
-			if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-		}
-		//if(keycode == Input.Keys.NUM_1) tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
-		//if(keycode == Input.Keys.NUM_2) tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
-		if(keycode == Keys.SPACE) {
-			SwitchChefs();
-			UpdateInventoryTextures();
-		}
-		if(keycode == Keys.E) if(VerifyInteract(ChefList.get(SelectedChef))) {
-			ChefList.get(SelectedChef).setInventory(StationInteract(ChefList.get(SelectedChef)));
-			UpdateInventoryTextures();
+		else if (Screen == MenuType.PAUSE){
+			if (keycode == Keys.P){
+				Screen = MenuType.GAME;
+			}
 		}
 		return false;
 	}
