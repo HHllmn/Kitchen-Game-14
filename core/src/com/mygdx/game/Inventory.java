@@ -7,7 +7,7 @@ public class Inventory {
 
     private boolean inventoryFull;
     private boolean inventoryEmpty;
-    private ArrayList<Item> items = new ArrayList<>();
+    private final ArrayList<Item> items = new ArrayList<>();
 
     public Inventory() {
 
@@ -31,10 +31,10 @@ public class Inventory {
     }
 
     public Item getPreparedIngredient(Ingredient.IngredientType ingredient) {
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getItemType() == ItemType.INGREDIENT) { //make sure the item in the inventory being checked is an Ingredient
-                if (((Ingredient) items.get(i)).isItPrepared() && ((Ingredient) items.get(i)).getIngredientType() == ingredient) { //check if its the correct Ingredient AND prepared.
-                    return items.get(i); //returns ingredient if it is correct and prepared.
+        for (Item item : items) {
+            if (item.getItemType() == ItemType.INGREDIENT) { //make sure the item in the inventory being checked is an Ingredient
+                if (((Ingredient) item).isItPrepared() && ((Ingredient) item).getIngredientType() == ingredient) { //check if its the correct Ingredient AND prepared.
+                    return item; //returns ingredient if it is correct and prepared.
                 }
             }
         }
@@ -85,19 +85,8 @@ public class Inventory {
     }
 
     public boolean contains(ItemType type) {
-        for (int i = 0; i < items.size(); i++) {
-            return type == items.get(i).getItemType();
-        }
-        return false;
-    }
-
-    public boolean containsPreparedIngredient(Ingredient.IngredientType ingredient) {
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getItemType() == ItemType.INGREDIENT) { //make sure the item in the inventory being checked is an Ingredient
-                if (((Ingredient) items.get(i)).isItPrepared() && ((Ingredient) items.get(i)).getIngredientType() == ingredient) { //check if its the correct Ingredient AND prepared.
-                    return true; //returns true if ingredient is correct and prepared.
-                }
-            }
+        for (Item item : items) {
+            return type == item.getItemType();
         }
         return false;
     }

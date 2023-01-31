@@ -3,10 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static com.mygdx.game.Plate.MealType.randomMeal;
 
@@ -14,20 +11,20 @@ public class Order {
     ArrayList<Integer> Item = new ArrayList<>();
 
     int x = -20; //Where on the x-axis the orders appear
-    private Random rndNum = new Random();
-    private int MaxItems = 1; //MaxItems is the maximum possible number of items which can be in an order.
+    private final Random rndNum = new Random();
+    private final int MaxItems = 1; //MaxItems is the maximum possible number of items which can be in an order.
     // int ListLen = rd.nextInt(MaxItems); //Length of the order, number of items
-    private static int ListLen = 1;
+    private static final int ListLen = 1;
     private boolean isCompleted;
-    private boolean noTimer;
-    private int[] ItemList = new int[10]; //Array of all possible item IDs (0 is currently a placeholder)
+    private final boolean noTimer;
+    private final int[] ItemList = new int[10]; //Array of all possible item IDs (0 is currently a placeholder)
     private int timeWaited = 0;
     String OrderBackgroundPath = "OrderImage.png";
-    private static Texture successTexture = new Texture("Success.png");
-    private static Texture failTexture = new Texture("Fail.png");
+    private static final Texture successTexture = new Texture("Success.png");
+    private static final Texture failTexture = new Texture("Fail.png");
     Texture texOrderBackground = new Texture(OrderBackgroundPath);
-    private Map<Plate.MealType, String> meals = new HashMap<Plate.MealType, String>();
-    private Plate.MealType expectedMeal;
+    private final Map<Plate.MealType, String> meals = new HashMap<>();
+    private final Plate.MealType expectedMeal;
 
 
     String OrderForegroundPath;
@@ -86,14 +83,14 @@ public class Order {
             complete = true;
             for (int i = 0; i < ChefInventory.size(); i++) {
                 for (int j = 0; j < Item.size(); j++) {
-                    if (ChefInventory.get(i) == Item.get(j)) {
+                    if (Objects.equals(ChefInventory.get(i), Item.get(j))) {
                         ChefInventory.remove(i);
                         Item.remove(j);
                         complete = false;
                         itemfound = true;
                         break;
                     }
-                    if (complete == false) break;
+                    if (!complete) break;
                 }
             }
         }
@@ -116,8 +113,7 @@ public class Order {
         foreground.getTextureData().prepare();
         Pixmap pixmapB = foreground.getTextureData().consumePixmap();
         pixmapA.drawPixmap(pixmapB,(background.getWidth()/2 - foreground.getWidth()/2),(background.getHeight()/2 - foreground.getHeight()/2));
-        Texture texOut = new Texture(pixmapA);
-        return texOut;
+        return new Texture(pixmapA);
     }
 
     public void displayRep(Plate.MealType deliveredMeal) {

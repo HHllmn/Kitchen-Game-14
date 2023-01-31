@@ -3,12 +3,12 @@ package com.mygdx.game;
 public class Grill implements Station {
 
     static int GrillID = 1; //Exists to identify the class for Debugging
-    {
+    static {
         GrillID += 1;
     }
 
     private boolean isProcessing;
-    private StationType stationType;
+    private final StationType stationType;
     private Ingredient contents;
     private int progress;
 
@@ -23,7 +23,7 @@ public class Grill implements Station {
         boolean result = false;
         if(item.getItemType() == ItemType.INGREDIENT){
             Ingredient ingredient = (Ingredient) item;
-            if(ingredient.isItCooked() == false){
+            if(!ingredient.isItCooked()){
                 result = ingredient.getIngredientType() == Ingredient.IngredientType.BEEF_PATTY;
             }
         }
@@ -32,7 +32,7 @@ public class Grill implements Station {
 
     @Override
     public Inventory Interact(Inventory items) {
-        if(this.contents == null && this.isProcessing == false) {
+        if(this.contents == null && !this.isProcessing) {
             if(items.isNotEmpty()) {
                 if(items.contains(ItemType.INGREDIENT)) {
                     if(isAllowedIngredient(items.getFirstItem())) {

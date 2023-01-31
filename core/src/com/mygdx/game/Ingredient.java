@@ -11,11 +11,11 @@ public class Ingredient implements Item {
         ONION,
         BEEF_PATTY,
         CHEESE,
-        BUNS;
+        BUNS
     }
 
-    private ItemType itemType;
-    private IngredientType ingredientType;
+    private final ItemType itemType;
+    private final IngredientType ingredientType;
 
     public Ingredient() {
         this.ingredientType = IngredientType.LETTUCE;
@@ -28,20 +28,9 @@ public class Ingredient implements Item {
         this.ingredientType = type;
         this.isCooked = false;
         this.isChopped = false;
-        if(type != IngredientType.BUNS) { //buns do not need to be prepared.
-            this.isPrepared = false;
-        }
-        else {
-            this.isPrepared = true;
-        }
+        //buns do not need to be prepared.
+        this.isPrepared = type == IngredientType.BUNS;
         this.itemType = ItemType.INGREDIENT;
-    }
-
-    public Ingredient(IngredientType type, boolean finished) {
-        this.ingredientType = type;
-        setPrepared(finished);
-        this.itemType = ItemType.INGREDIENT;
-
     }
 
     public void setCooked(boolean cooked) {
@@ -55,26 +44,6 @@ public class Ingredient implements Item {
 
     public boolean isItPrepared() {
         return this.isPrepared;
-    }
-
-    private void setPrepared(boolean finished) {
-        switch (ingredientType) {
-            case LETTUCE:
-            case TOMATO:
-            case CHEESE:
-            case ONION: {
-                isChopped = finished;
-                isPrepared = finished;
-                break;
-            }
-            case BEEF_PATTY:
-                isCooked = finished;
-                isPrepared = finished;
-                break;
-            case BUNS:
-                isPrepared = finished;
-                break;
-        }
     }
 
     private void checkIfPrepared() {
@@ -102,17 +71,6 @@ public class Ingredient implements Item {
         return this.isCooked;
     }
 
-    static boolean isIt(Item ingredient, IngredientType type) {
-        return ((Ingredient) ingredient).getIngredientType() == type;
-    }
-
-    static boolean isItChopped(Item ingredient) {
-        return ((Ingredient) ingredient).isItChopped();
-    }
-    static boolean isItCooked(Item ingredient) {
-        return ((Ingredient) ingredient).isItCooked();
-    }
-
 
     public IngredientType getIngredientType() {
         return this.ingredientType;
@@ -120,6 +78,6 @@ public class Ingredient implements Item {
 
     public ItemType getItemType() {
         return this.itemType;
-    };
+    }
 
 }

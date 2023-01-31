@@ -1,14 +1,12 @@
 package com.mygdx.game;
 
-import java.util.ArrayList;
-
 public class Bin implements Station {
 
     static int BinID = 1; //Exists to identify the class for Debugging
-    {
+    static {
         BinID += 1;
     }
-    private StationType stationType;
+    private final StationType stationType;
 
     public Bin() {
         this.stationType = StationType.BIN;

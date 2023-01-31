@@ -9,7 +9,7 @@ public class Plate implements Item {
         SALAD(1);
         //PIZZA(2),
         //JACKET_POTATO(3);
-        private int value;
+        private final int value;
         private static Map map = new HashMap<>();
         private MealType(int value) {
             this.value = value;
@@ -40,8 +40,8 @@ public class Plate implements Item {
 
     }
 
-    private MealType mealType;
-    private ItemType itemType;
+    private final MealType mealType;
+    private final ItemType itemType;
 
 
     public Plate(MealType mealType){
@@ -60,5 +60,5 @@ public class Plate implements Item {
 
     public ItemType getItemType() {
         return this.itemType;
-    };
+    }
 }

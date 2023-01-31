@@ -5,7 +5,7 @@ import com.mygdx.game.Ingredient.IngredientType;
 public class CuttingBoard implements Station {
 
     static int CuttingBoardID = 1; //Exists to identify the class for Debugging
-    {
+    static {
         CuttingBoardID += 1;
     }
     static private StationType stationType;
@@ -14,7 +14,7 @@ public class CuttingBoard implements Station {
     private int progress;
 
     public CuttingBoard() {
-        this.stationType = StationType.CUTTING_BOARD;
+        stationType = StationType.CUTTING_BOARD;
         this.isProcessing = false;
         this.contents = null;
     }
@@ -23,7 +23,7 @@ public class CuttingBoard implements Station {
         boolean result = false;
         if(item.getItemType() == ItemType.INGREDIENT){
             Ingredient ingredient = (Ingredient) item;
-            if(ingredient.isItChopped() == false){
+            if(!ingredient.isItChopped()){
                 result = ingredient.getIngredientType() == IngredientType.LETTUCE ||
                         ingredient.getIngredientType() == IngredientType.TOMATO ||
                         ingredient.getIngredientType() == IngredientType.ONION ||
@@ -35,7 +35,7 @@ public class CuttingBoard implements Station {
 
     @Override
     public Inventory Interact(Inventory items) {
-        if(this.contents == null && this.isProcessing == false) {
+        if(this.contents == null && !this.isProcessing) {
             if(items.isNotEmpty()) {
                 if(items.contains(ItemType.INGREDIENT)) {
                     if(isAllowedIngredient(items.getFirstItem())) {
@@ -74,7 +74,7 @@ public class CuttingBoard implements Station {
     }
     @Override
     public boolean equals(StationType type) {
-        return this.stationType == type;
+        return stationType == type;
     }
     public int getProgress() {
         return progress;

@@ -3,15 +3,16 @@ package com.mygdx.game;
 public class Oven implements Station {
 
     static int OvenID = 1; //Exists to identify the class for Debugging
-    {
+    static {
         OvenID += 1;
     }
-    private StationType stationType;
+    private final StationType stationType;
 
     private boolean isProcessing;
     private Ingredient contents;
 
     public Oven() {
+        this.stationType = StationType.OVEN;
         this.isProcessing = false;
     }
 

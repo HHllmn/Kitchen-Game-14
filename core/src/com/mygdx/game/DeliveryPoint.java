@@ -1,14 +1,12 @@
 package com.mygdx.game;
 
-import java.util.ArrayList;
-
 public class DeliveryPoint implements Station {
 
     static int DeliveryPointID = 1; //Exists to identify the class for Debugging
-    {
+    static {
         DeliveryPointID += 1;
     }
-    private StationType stationType;
+    private final StationType stationType;
     private Plate meal;
 
     public DeliveryPoint() {
@@ -29,39 +27,13 @@ public class DeliveryPoint implements Station {
         return inventory;
     }
 
-    public Inventory Deliver(Inventory inventory, ArrayList<Order> orders) {
-        if(inventory != null && inventory.size() > 0) {
-            if (inventory.get(0).getClass().equals(new Plate().getClass())) {
-                //Success!! Item Delivered.
-                this.meal = (Plate) inventory.getFirstItem();
-                inventory.removeFirstItem();
-                return inventory;
-            }
-        }
-        //throw visual error, food isn't plated!
-        return inventory;
-    }
-
     @Override
     public boolean equals(StationType type) {
         return this.stationType == type;
     }
 
-    public Plate getPlate() {
-        return this.meal;
-    }
-
     public boolean confirmDelivery() {
-        if(this.meal != null) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    public void emptyDeliveryPoint() {
-
+        return this.meal != null;
     }
 
     public Plate.MealType getDeliveredMealType() {
@@ -74,4 +46,3 @@ public class DeliveryPoint implements Station {
     public void incrementProgress() { }
 
 }
-

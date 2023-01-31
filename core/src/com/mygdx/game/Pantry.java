@@ -1,21 +1,20 @@
 package com.mygdx.game;
 
-import java.util.ArrayList;
-
 //turn this into a class
 
 
 public class Pantry implements Station {
 
-    private Ingredient.IngredientType pantryType;
+    private final Ingredient.IngredientType pantryType;
 
     static int PantryID = 1; //Exists to identify the class for Debugging
-    {
+    static {
         PantryID += 1;
     }
-    private StationType stationType;
+    private final StationType stationType;
 
     public Pantry(Ingredient.IngredientType pantryType) {
+        this.stationType = StationType.PANTRY;
         this.pantryType = pantryType;
     }
 

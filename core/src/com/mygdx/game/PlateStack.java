@@ -9,7 +9,7 @@ public class PlateStack implements Station{
     private StationType stationType;
 
     public PlateStack() {
-
+        this. stationType = StationType.PLATE_STACK;
     }
 
     @Override

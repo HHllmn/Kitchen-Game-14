@@ -43,19 +43,18 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	Texture borderTex;
 
-	private ArrayList<Texture> StationProcessingTextures = new ArrayList<>();
-	private ArrayList<Rectangle> StationProcessingRectangles = new ArrayList<>();
+	private final ArrayList<Texture> StationProcessingTextures = new ArrayList<>();
+	private final ArrayList<Rectangle> StationProcessingRectangles = new ArrayList<>();
 
-	private ArrayList<Texture> Progresses = new ArrayList<>();
-	private ArrayList<Point> StationsInProgress = new ArrayList<>();
-	private ArrayList<Rectangle> StationProgressRectangles = new ArrayList<>();
+	private final ArrayList<Texture> Progresses = new ArrayList<>();
+	private final ArrayList<Point> StationsInProgress = new ArrayList<>();
+	private final ArrayList<Rectangle> StationProgressRectangles = new ArrayList<>();
 	private ArrayList<Texture> InventoryTextures = new ArrayList<>();
 
 	public Rectangle MenuItem1; //Menu Item Number 1
 	public Rectangle Border; //Border Item
 
-	private Texture InventoryPanel; //chef Inventory
-	private ArrayList<Texture> chefImgs = new ArrayList<>(); //Icon for Chef Inventory
+	private final ArrayList<Texture> chefImgs = new ArrayList<>(); //Icon for Chef Inventory
 	static final int TILE_MAP_HEIGHT = 490; //Number of pixels tall the map is
 	static final int TILE_MAP_WIDTH = 770; //Number of pixels wide the map is
 	static final int TILE_SIZE = 70; //Multiply tile position by this to get the pixel position
@@ -80,10 +79,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			{ 2, 1, 1, 800, 801, 804, 803}
 	};
 
-	public int[] cookingStations;
-
 	Texture img;
-	private TiledMap tiledMap;
 
 	MyInputProcessor processor = new MyInputProcessor();
 
@@ -95,7 +91,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public static Timer clock = new Timer(true);
 	BitmapFont font;
 	int LastTime = -1;
-	public ArrayList<Order> OrderList = new ArrayList<Order>();
+	public ArrayList<Order> OrderList = new ArrayList<>();
 	Point OrderPoint;
 	int lastKeyPress = -1;
 	int lastSpacePress = -1;
@@ -113,7 +109,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		camera.setToOrtho(false, w, h);
 		camera.translate(-150, -25);
 		camera.update();
-		tiledMap = new TmxMapLoader().load("PiazzaPanicLevel.tmx");
+		TiledMap tiledMap = new TmxMapLoader().load("PiazzaPanicLevel.tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 		//Gdx.input.setInputProcessor(processor);
 		Gdx.input.setInputProcessor(this);
@@ -126,7 +122,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		for (int i = 0; i < ChefCount; i++) ChefList.add(new Chef());
 
 		borderTex = new Texture("Border.png");
-		InventoryPanel = new Texture ("InventoryPanel.png");
+		//chef Inventory
 		chefImgs.add(0, new Texture("ChefADown.png"));
 		chefImgs.add(1, new Texture("ChefBDown.png"));//add new chefs here to display a new one
 
@@ -160,7 +156,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	public void render() {
 		clock.tick();
 		movement();
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
 
 		ScreenUtils.clear(1, 0, 0, 1);
@@ -188,11 +184,11 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.draw(borderTex, LeftBorder.x, LeftBorder.y, LeftBorder.getWidth(), LeftBorder.getHeight());
 
 		//remove this new texture to save memory.
-		batch.draw(new Texture("Inventory.png"), RightBorder.x + 3, 258, TILE_SIZE/2, 200); //drawing chef Inventory panel
-		batch.draw(chefImgs.get(SelectedChef), RightBorder.x + 2, 463, TILE_SIZE/2, TILE_SIZE/2); //drawing Inventory chef Icon
+		batch.draw(new Texture("Inventory.png"), RightBorder.x + 3, 258, (float) TILE_SIZE / 2, 200); //drawing chef Inventory panel
+		batch.draw(chefImgs.get(SelectedChef), RightBorder.x + 2, 463, (float) TILE_SIZE / 2, (float) TILE_SIZE/2); //drawing Inventory chef Icon
 
-		for (int i = 0; i < ChefList.size(); i++) {
-			batch.draw(ChefList.get(i).getTexture(), ChefList.get(i).getCameraX(), ChefList.get(i).getCameraY(), ChefList.get(i).getWidth(), ChefList.get(i).getHeight());
+		for (Chef chef : ChefList) {
+			batch.draw(chef.getTexture(), chef.getCameraX(), chef.getCameraY(), chef.getWidth(), chef.getHeight());
 		}
 		for (int i = 0; i < StationProcessingTextures.size(); i++) {
 			batch.draw(StationProcessingTextures.get(i), StationProcessingRectangles.get(i).x, StationProcessingRectangles.get(i).y, StationProcessingRectangles.get(i).getWidth(), StationProcessingRectangles.get(i).getHeight());
@@ -204,7 +200,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 					StationProgressRectangles.get(i).getHeight());
 		}
 		for (int i = 0; i < InventoryTextures.size(); i++) {
-			batch.draw(InventoryTextures.get(i), RightBorder.x + 3, (TILE_MAP_HEIGHT - 70) - (i * 40), TILE_SIZE / 2, TILE_SIZE / 2);
+			batch.draw(InventoryTextures.get(i), RightBorder.x + 3, (TILE_MAP_HEIGHT - 70) - (i * 40), (float) TILE_SIZE / 2, (float) TILE_SIZE / 2);
 		}
 
 		//DRAWING THE ORDER LIST BY ITEMS INDIVIDUALLY
@@ -230,10 +226,9 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		batch.end();
 		//Then we check if the order has reached its "max waiting time", if so the customer leaves, so we remove it
 
-		for(int i = 0; i < StationsInProgress.size(); i++) {
+		for (Point stationsInProgress : StationsInProgress) {
 			if (clock.getMilliElapsed() % 60 == 0) {
-				StationsInProgress.get(i);
-				tileGrid[StationsInProgress.get(i).x][StationsInProgress.get(i).y].getStation().incrementProgress();
+				tileGrid[stationsInProgress.x][stationsInProgress.y].getStation().incrementProgress();
 			}
 		}
 
@@ -339,11 +334,10 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	//endregion Initialisation Methods
 
 	//region Other Methods
-	public boolean SwitchChefs() {
+	public void SwitchChefs() {
 		//Subroutine to switch between chef;
 		SelectedChef++;
 		if (SelectedChef > ChefList.size() - 1) SelectedChef = 0;
-		return false;
 	}
 
 	private boolean collisionCheck(Chef PlayerChef) {
@@ -352,8 +346,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	private boolean VerifyInteract(Chef PlayerChef) {
 		Tile currentTile = tileGrid[PlayerChef.getTileX()][PlayerChef.getTileY()];
-		boolean result = currentTile.CanIInteract(PlayerChef.getDirection());
-		return result;
+		return currentTile.CanIInteract(PlayerChef.getDirection());
 	}
 
 	private Inventory StationInteract(Chef Player) {
@@ -458,11 +451,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		StationProgressRectangles.add(new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
 	}
 
-	private void AddStationProcess(String imagePath, int x, int y, int size) {
-		StationProcessingTextures.add(new Texture(imagePath));
-		StationProcessingRectangles.add(new Rectangle(x * TILE_SIZE, y * TILE_SIZE, size, size));
-	}
-
 	private void RemoveStationProcess(int x, int y) {
 		int index = StationProcessingRectangles.indexOf(new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE));
 		StationProcessingTextures.remove(index);
@@ -474,18 +462,11 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		StationProgressRectangles.remove(index);
 	}
 
-	static public void InventoryFull() {
-
-		int n = 1;
-
-		//Success!
-	}
-
 	private void UpdateInventoryTextures() {
 		Inventory items = ChefList.get(SelectedChef).getInventory();
 		this.InventoryTextures = new ArrayList<>();
 		for (int i = 0; i < items.size(); i++) {
-			if(items.get(i).getClass().equals(new Ingredient().getClass())) {
+			if(items.get(i).getClass().equals(Ingredient.class)) {
 				switch (((Ingredient) items.get(i)).getIngredientType()) {
 					case LETTUCE: {
 						if(((Ingredient) items.get(i)).isItChopped()){
@@ -548,17 +529,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	}
 
-	private static Texture inventoryPanel(Texture background, Texture foreground){
-		background.getTextureData().prepare();
-		Pixmap pixmapA = background.getTextureData().consumePixmap();
-		foreground.getTextureData().prepare();
-		Pixmap pixmapB = foreground.getTextureData().consumePixmap();
-		pixmapA.drawPixmap(pixmapB, 0, 0);
-		//pixmapA.drawPixmap(pixmapB,(background.getWidth()/2 - foreground.getWidth()/2),(background.getHeight()/2 - foreground.getHeight()/2));
-		Texture texOut = new Texture(pixmapA);
-		return texOut;
-	}
-
 	public boolean movement(){
 		if (lastKeyPress + 10 < clock.getMilliElapsed()) {
 			if (processor.leftPressed) {
@@ -605,7 +575,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 
 	@Override
 	public boolean keyUp(int keycode) {
-		int random;
 
 		if(keycode == Input.Keys.LEFT) {
 			ChefList.get(SelectedChef).setDirection(Facing.LEFT);

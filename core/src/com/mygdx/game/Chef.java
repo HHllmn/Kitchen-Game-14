@@ -1,7 +1,6 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -14,9 +13,9 @@ public class Chef {
         RIGHT(1),
         DOWN(2),
         LEFT(3);
-        private int value;
-        private static Map map = new HashMap<>();
-        private Facing(int value) {
+        private final int value;
+        private static final Map map = new HashMap<>();
+        Facing(int value) {
             this.value = value;
         }
         static {
@@ -33,22 +32,19 @@ public class Chef {
     }
 
     //Initial Variables
-    private Point tilePosition;
-    private Point cameraPosition;
-    private int width;
-    private int height;
+    private final Point tilePosition;
+    private final Point cameraPosition;
+    private final int width;
+    private final int height;
 
 
-    String texturePath;
-
-    private ArrayList<Texture> chefTextures;
-    private SpriteBatch batch;
+    private final ArrayList<Texture> chefTextures;
     private Facing direction;
     private Inventory inventory = new Inventory();
 
     //Creates a chef with ChefNumber/ID as 0, then increments (so next ChefNumber is 1)
     static int ChefNumber = 0;
-    {
+    static {
         ChefNumber += 1;
     }
     //0 is up, 1 is right, 2 is down, 3 is left
@@ -59,7 +55,7 @@ public class Chef {
         this.height = 70;
         this.direction = Facing.UP;
         //this.texturePath = "ChefUp.png";
-        this.chefTextures = new ArrayList<Texture>();
+        this.chefTextures = new ArrayList<>();
         if(ChefNumber == 1) {
             this.chefTextures.add(new Texture("ChefAUp.png"));
             this.chefTextures.add(new Texture("ChefARight.png"));
@@ -73,42 +69,6 @@ public class Chef {
             this.chefTextures.add(new Texture("ChefBLeft.png"));
         }
     }
-    public Chef(int xaxis, int yaxis, int w, int h){
-        batch = new SpriteBatch();
-        this.cameraPosition.x = xaxis;
-        this.cameraPosition.y = yaxis;
-        this.width = w;
-        this.height = h;
-        this.texturePath = "ChefUp.png";
-    }
-    public Chef(int xaxis, int yaxis, int w, int h, String tex){
-            batch = new SpriteBatch();
-            this.cameraPosition.x = xaxis;
-            this.cameraPosition.y = yaxis;
-            this.width = w;
-            this.height = h;
-            this.texturePath = tex;
-    }
-
-    //update this to be a switch statement.
-    public void InteractWith() {
-
-        if (direction == Facing.UP) {
-            int WorkStationToInteract = KitchenGame14.WorkstationsGrid[tilePosition.y + 1][tilePosition.x];
-        }
-        else if (direction == Facing.RIGHT) {
-            int WorkStationToInteract = KitchenGame14.WorkstationsGrid[tilePosition.y][tilePosition.x + 1];
-
-        }
-        else if (direction == Facing.DOWN) {
-            int WorkStationToInteract = KitchenGame14.WorkstationsGrid[tilePosition.y - 1][tilePosition.x];
-
-        }
-        else if (direction == Facing.LEFT) {
-            int WorkStationToInteract = KitchenGame14.WorkstationsGrid[tilePosition.y][tilePosition.x - 1];
-
-        }
-    }
 
     //public void translateChef(int x, int y){ //Description: move the chef using pixel distance relative to the camera
     //    this.cameraPosition.x += x;
@@ -119,7 +79,7 @@ public class Chef {
 
 
     //This entire subroutine needs to be updated to make the chef moving from one space to another smooth, the movement animation should last
-    // less than a second but incrementally move the chef over until its in the new space, like a sliding motion.
+    // less than a second but incrementally move the chef over until it's in the new space, like a sliding motion.
     public void MoveChef(){ //Description: move the chef using number of tiles relative to his current position
         switch(direction) {
             case UP:
@@ -157,17 +117,10 @@ public class Chef {
     public int getCameraX(){
         return cameraPosition.x;
     }
-    public void setCameraX(int value){
-        cameraPosition.x = value;
-    }
+
     public int getCameraY(){
         return cameraPosition.y;
     }
-    public void setCameraY(int value){
-        cameraPosition.y = value;
-    }
-    public Point getCameraPosition() { return this.cameraPosition; }
-    public void setCameraPosition(int x, int y) { this.cameraPosition.setLocation(x, y); }
 
     public int getWidth(){
         return width;
@@ -176,12 +129,6 @@ public class Chef {
         return height;
     }
 
-    public String getTexturePath() {
-        return texturePath;
-    }
-    public void setTexture(String tex){
-        texturePath = tex;
-    }
     public Texture getTexture(){
         return getTexture(this.direction);
     }
