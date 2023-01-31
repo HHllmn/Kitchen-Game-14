@@ -84,9 +84,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	};
 
 	Texture img;
-
-	MyInputProcessor processor = new MyInputProcessor();
-
 	private TiledMapRenderer tiledMapRenderer;
 	public Tile[][] tileGrid = new Tile[GRID_WIDTH][GRID_HEIGHT];
 
@@ -117,7 +114,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 	//region Main Methods
 	@Override
 	public void create() {
-		Gdx.input.setInputProcessor(processor);
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		MenuTex = new Texture("PiazzaPanicMenu.png");
@@ -190,7 +186,6 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 		}
 		else if (Screen == MenuType.GAME){
 			clock.tick();
-			movement();
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_COLOR_BUFFER_BIT);
 			camera.update();
 
@@ -561,47 +556,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			}
 
 		}
-
-
-
 	}
-
-	public boolean movement(){
-		if (lastKeyPress + 10 < clock.getMilliElapsed()) {
-			if (processor.leftPressed) {
-				ChefList.get(SelectedChef).setDirection(Facing.LEFT);
-				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-				lastKeyPress = clock.getMilliElapsed();
-			}
-			if (processor.rightPressed) {
-				ChefList.get(SelectedChef).setDirection(Facing.RIGHT);
-				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-				lastKeyPress = clock.getMilliElapsed();
-			}
-			if (processor.upPressed) {
-				ChefList.get(SelectedChef).setDirection(Facing.UP);
-				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-				lastKeyPress = clock.getMilliElapsed();
-			}
-			if (processor.downPressed) {
-				ChefList.get(SelectedChef).setDirection(Facing.DOWN);
-				if (collisionCheck(ChefList.get(SelectedChef))) ChefList.get(SelectedChef).MoveChef();
-				lastKeyPress = clock.getMilliElapsed();
-			}
-		}
-		if(processor.spacePressed && lastSpacePress + 8 < clock.getMilliElapsed())
-		{
-			SwitchChefs();
-			lastSpacePress = clock.getMilliElapsed();
-		}
-		//if(processor.ePressed && VerifyInteract(ChefList.get(SelectedChef))){
-		//		ChefList.get(SelectedChef).setInventory(StationInteract(ChefList.get(SelectedChef)));
-		//	}
-		//}
-		return false;
-	}
-
-
 	//endregion Methods
 
 	//region Events
