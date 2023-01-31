@@ -15,6 +15,7 @@ public class Order {
     private final int MaxItems = 1; //MaxItems is the maximum possible number of items which can be in an order.
     // int ListLen = rd.nextInt(MaxItems); //Length of the order, number of items
     private static final int ListLen = 1;
+    private static int TIMEARRIVED;
     private boolean isCompleted;
     private final boolean noTimer;
     private final int[] ItemList = new int[10]; //Array of all possible item IDs (0 is currently a placeholder)
@@ -51,7 +52,8 @@ public class Order {
         isCompleted = false;
 
     }
-    public Order(boolean noTimer) {
+    public Order(int timeArrived, boolean noTimer) {
+        this.TIMEARRIVED = timeArrived;
         this.noTimer = noTimer;
     }
 
@@ -140,5 +142,9 @@ public class Order {
         if(!noTimer || isCompleted) {
             timeWaited++;
         }
+    }
+
+    public int getTimeArrived() {
+        return TIMEARRIVED;
     }
 }

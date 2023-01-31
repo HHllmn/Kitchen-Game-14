@@ -262,7 +262,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			int OrderDeleteAfter = 20; //SET time for order to delete after (seconds)
 			if (OrderTimeout == true) {
 				for (int i = 0; i < OrderList.size(); i++) {
-					batch.draw(borderTex, OrderPoint.x, OrderPoint.y - ((i) * 100) - 10, 7 * clock.getTimeSince(OrderList.get(i).TimeArrived), 10);
+					batch.draw(borderTex, OrderPoint.x, OrderPoint.y - ((i) * 100) - 10, 7 * clock.getTimeSince(OrderList.get(i).getTimeArrived()), 10);
 				}
 			}
 			batch.end();
@@ -285,7 +285,7 @@ public class KitchenGame14 extends ApplicationAdapter implements InputProcessor 
 			}
 			if (clock.getTotalTime() % 15 == 0 && clock.getTotalTime() != LastTime && OrderList.size() < 5) {
 				if (TotalOrderCount != LevelOrders){
-					OrderList.add(new Order());
+					OrderList.add(new Order(clock.getTotalTime(), true));
 					TotalOrderCount++;
 				}
 				LastTime = clock.getTotalTime();
