@@ -2,7 +2,7 @@ package com.mygdx.game;
 
 public class Timer {
 
-    int milliElapsed = 0;
+    int milliElapsed = 0; //milliElapsed actually represents frames elapsed
     int secondsElapsed = 0;
     int minutesElapsed = 0;
     boolean running;

@@ -19,7 +19,7 @@ public class Order {
     private final boolean noTimer;
     private final int[] ItemList = new int[10]; //Array of all possible item IDs (0 is currently a placeholder)
     private int timeWaited = 0;
-    String OrderBackgroundPath = "OrderImage.png";
+    String OrderBackgroundPath = "OrderImage2.png";
     private static final Texture successTexture = new Texture("Success.png");
     private static final Texture failTexture = new Texture("Fail.png");
     Texture texOrderBackground = new Texture(OrderBackgroundPath);
@@ -65,7 +65,7 @@ public class Order {
         return false;
     }
 
-    private void IntialiseMeals() {
+    private void IntialiseMeals() { //new meals are added to the HashMap here to connect them to their pictures.
         meals.put(Plate.MealType.HAMBURGER, "Hamburger_Cheese.png");
         meals.put(Plate.MealType.SALAD, "Salad.png");
     }
@@ -141,9 +141,4 @@ public class Order {
             timeWaited++;
         }
     }
-
-
-
-
-
 }
